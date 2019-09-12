@@ -122,17 +122,15 @@ def randomInit(fullGrid):
 
 
 class Section:
-  def __init__(self, letter, numEls, arr, ):
+  def __init__(self, letter, numEls):
     self.letter = letter
     self.numEls = numEls
-    self.arr = arr
-    
 
+    #array holds any values that have alredy been assigned in that section
+    arr = [for 0 in range(numEls)]
+    
   def getLetter(self):
     return self.letter
-
-  def incEls():
-    self.numElse += 1
 
 class Box:
   def __init__(self, letter, xPos, yPos):
@@ -148,6 +146,9 @@ class Box:
 
   def constrained(box):
     return box.possibleValues
+
+  def getSection(self):
+    return(ruleDict[letter])
 
 
 

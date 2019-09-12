@@ -32,7 +32,15 @@ def isRowSafe(grid, xPos, yPos, num):
       return False
   return True
 
-def isSectionSafe():
+
+#CURRENTLY this function will just check if there is any other of the same number in it
+#does not take into account the type or total
+def isSectionSafe(grid, xPos, yPos, num):
+  global a
+  #check to see if adding the variable will allow it to be safe still
+  for i in range grid[xPos][yPos].numEls():
+    if(getSection(grid[xPos][yPos]).arr[i] == num):
+      return False
   return True
 
 
@@ -237,7 +245,7 @@ def solveSudoku(grid):
     print(num)
 
     if (isSafe(grid, xPos, yPos, num)):
-        grid[xPos][yPos].num = num
+        grid[xPos][yPos].setNum(num)
 
         print(grid[xPos][yPos].num)
 
@@ -246,8 +254,7 @@ def solveSudoku(grid):
 
         print(grid[xPos][yPos].num)
 
-        grid[xPos][yPos].num = 0
-        
+        grid[xPos][yPos].setNum = 0        
 
   print(False)
   return False
