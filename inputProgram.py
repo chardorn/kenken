@@ -125,6 +125,11 @@ class Section:
   def __init__(self, letter, numEls):
     self.letter = letter
     self.numEls = numEls
+<<<<<<< HEAD
+=======
+    arr = []
+    
+>>>>>>> d5c3b2420c650f58bf76079aa8030d4f71a8007c
 
     #array holds any values that have alredy been assigned in that section
     arr = [for 0 in range(numEls)]
@@ -158,6 +163,8 @@ sections = [0 for x in range(a)]
 
 inputs = []
 boxes = []
+
+#We'll now begin the Fitness-gram Pacer Test (SectionRules)
 sectionRules = []
 #Iterate down rows to add Strings of characters to array
 y = 0
@@ -179,16 +186,36 @@ while(y < a):
 
   y += 1
 
+def splitRule(rule):
+  global factor, operator
+  factorStr = ""
+  for i in range(len(rule)):
+    if(rule[i].isdigit()):
+      factorStr += rule[i]
+    else:
+      #Check for if rule exists or not
+      operator += rule[i] or operator == None
+  #Convert factor from str to int
+  factor = int(factorStr)
+
 #Iterate through and assign Section rules based on letter ID
 ruleDict = dict.fromkeys(set(sectionRules), "")
 
 for key in sorted(ruleDict):
   print("{}:".format(key), end = '')
-  ruleDict[key] = str(input())
-    #Convert incoming string into two parts: number and operator
+  rule = str(input())
+  ruleDict[key] = rule
+  
+  #Convert incoming string into two parts: number and operator
+  factor = 0
+  operator = ""
+  splitRule(rule)
+  # print(factor)
+  # print(operator)
+  ruleDict[key] = Section(factor, operator)
 
+# print(ruleDict)
 
-    
 print(a)
 print(inputs)
 printGrid(randomInit(fullGrid))
@@ -196,4 +223,3 @@ print("Is row valid?")
 print(checkRow(fullGrid, 0))
 print("Is column valid?")
 print(checkColumn(fullGrid, 0))
-
