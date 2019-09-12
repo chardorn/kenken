@@ -182,13 +182,15 @@ while(y < a):
 
 def splitRule(rule):
   global factor, operator
-  factor, operator = 0, ""
+  factorStr = ""
   for i in range(len(rule)):
     if(rule[i].isdigit()):
-      factor += int(rule[i])
+      factorStr += rule[i]
     else:
       #Check for if rule exists or not
       operator += rule[i] or operator == None
+  #Convert factor from str to int
+  factor = int(factorStr)
 
 #Iterate through and assign Section rules based on letter ID
 ruleDict = dict.fromkeys(set(sectionRules), "")
