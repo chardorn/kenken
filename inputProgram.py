@@ -125,14 +125,9 @@ class Section:
   def __init__(self, letter, numEls):
     self.letter = letter
     self.numEls = numEls
-<<<<<<< HEAD
-=======
-    arr = []
-    
->>>>>>> d5c3b2420c650f58bf76079aa8030d4f71a8007c
 
     #array holds any values that have alredy been assigned in that section
-    arr = [for 0 in range(numEls)]
+    arr = []
     
   def getLetter(self):
     return self.letter
