@@ -181,27 +181,32 @@ while(y < a):
   y += 1
 
 def splitRule(rule):
-  global factor
-  global operator
+  global factor, operator
+  factor, operator = 0, ""
   for i in range(len(rule)):
     if(rule[i].isdigit()):
       factor += int(rule[i])
     else:
-      operator += rule[i] or operator ==" "
+      #Check for if rule exists or not
+      operator += rule[i] or operator == None
 
 #Iterate through and assign Section rules based on letter ID
 ruleDict = dict.fromkeys(set(sectionRules), "")
 
 for key in sorted(ruleDict):
   print("{}:".format(key), end = '')
-  ruleDict[key] = str(input())
+  rule = str(input())
+  ruleDict[key] = rule
+  
   #Convert incoming string into two parts: number and operator
   factor = 0
   operator = ""
-  splitRule(str(input))
+  splitRule(rule)
+  # print(factor)
+  # print(operator)
   ruleDict[key] = Section(factor, operator)
 
-print(ruleDict)
+# print(ruleDict)
 
 print(a)
 print(inputs)
