@@ -217,4 +217,3 @@ print("Is row valid?")
 print(checkRow(fullGrid, 0))
 print("Is column valid?")
 print(checkColumn(fullGrid, 0))
-
