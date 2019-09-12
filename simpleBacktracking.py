@@ -32,6 +32,9 @@ def isRowSafe(grid, xPos, yPos, num):
       return False
   return True
 
+def isSectionSafe():
+  return True
+
 
 
 #check to see if there are any other of the same letter in that column
@@ -204,41 +207,46 @@ def nextNode(grid, l):
 
 #NOTE: this only checks rows and columns right now
 def isSafe(grid, x, y, num):
-    return(isRowSafe(grid, x, y, num) and isColumnSafe(grid, x, y, num))
+    return(isRowSafe(grid, x, y, num) and isColumnSafe(grid, x, y, num) and isSectionSafe())
 
 
 #REMEMBER this is a grid of boxes! Not just integers
 def solveSudoku(grid):
   global fullGrid
-  global currentX
-  global currentY
   global a
 
   # 'l' is a list variable that keeps the record of row and col in find_empty_location Function     
   l=[0,0]
+  
+  if(nextNode(grid, l) == False):
+    print(str(l[0]) + " " + str(l[1]))
+    fullGrid = grid
+    return True
 
   xPos = l[0]
   yPos = l[1]
-  
-  if(nextNode(grid, l) == False):
-    fullGrid = grid
-    return True
+
+  print("CurrentX: " + str(xPos) + " Current Y: " + str(yPos))
+
 
   #Num range is ints from 1 to a
   for num in range(1,a + 1):
 
-    printGrid(grid) #FOR TESTING
+    #printGrid(grid) #FOR TESTING
     #printGrid(fullGrid)
+    print(num)
 
     if (isSafe(grid, xPos, yPos, num)):
-        grid[col][row].num = num
+        grid[xPos][yPos].num = num
+
+        print(grid[xPos][yPos].num)
 
         if(solveSudoku(grid)):
           return True
 
-        print("CurrentX: " + str(col) + " Current Y: " + str(row))
-        print(num + 1)
-        grid[col][row].num = 0
+        print(grid[xPos][yPos].num)
+
+        grid[xPos][yPos].num = 0
         
 
   print(False)
