@@ -122,10 +122,10 @@ def randomInit(fullGrid):
 
 
 class Section:
-  def __init__(self, letter, numEls, arr, ):
+  def __init__(self, letter, numEls):
     self.letter = letter
     self.numEls = numEls
-    self.arr = arr
+    arr = []
     
 
   def getLetter(self):
@@ -157,6 +157,8 @@ sections = [0 for x in range(a)]
 
 inputs = []
 boxes = []
+
+#We'll now begin the Fitness-gram Pacer Test (SectionRules)
 sectionRules = []
 #Iterate down rows to add Strings of characters to array
 y = 0
@@ -178,16 +180,29 @@ while(y < a):
 
   y += 1
 
+def splitRule(rule):
+  global factor
+  global operator
+  for i in range(len(rule)):
+    if(rule[i].isdigit()):
+      factor += int(rule[i])
+    else:
+      operator += rule[i] or operator ==" "
+
 #Iterate through and assign Section rules based on letter ID
 ruleDict = dict.fromkeys(set(sectionRules), "")
 
 for key in sorted(ruleDict):
   print("{}:".format(key), end = '')
   ruleDict[key] = str(input())
-    #Convert incoming string into two parts: number and operator
+  #Convert incoming string into two parts: number and operator
+  factor = 0
+  operator = ""
+  splitRule(str(input))
+  ruleDict[key] = Section(factor, operator)
 
+print(ruleDict)
 
-    
 print(a)
 print(inputs)
 printGrid(randomInit(fullGrid))
