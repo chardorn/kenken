@@ -99,6 +99,21 @@ def getFactorCombos(numBoxes, total):
     if(product == total):
       return factors
 
+#if string == "/"
+def getDivCombos(numBoxes, total):
+  global b
+  factors = []
+
+  for i in range(b):
+    if(i != 0):
+      if(i % total == 0):
+        factors.append(i)
+  for x in range(factors.length):
+    for y in range(numBoxes):
+      div == max(div, factors[y]) / min(div, factors[y])
+    if(div == total):
+      return factors
+
 #print grid
 def printGrid(fullGrid):
   global a
