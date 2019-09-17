@@ -39,13 +39,16 @@ def isSectionSafe(grid, xPos, yPos, num):
   #Array of length is the numBoxes in the Section
   #Total is what they must equal combined
   #Func is either +, -, *, or /
-def checkSection2(section, newNum):
+def checkSection(section, newNum):
+  section.sortBoxes();
   func = section.operator
   total = section.total
   arr = section.boxes
   result = arr[0].num
   print(result)
   for i in range(len(arr)-1):
+      if(arr[i + 1].num ==  0):
+        continue
       if(func == '+'):
           result += arr[i + 1].num
       elif(func == '-'):
@@ -55,27 +58,31 @@ def checkSection2(section, newNum):
       elif(func == '/'):
           result /= arr[i + 1].num
       print("Result: " + str(result))
-  result += newNum
-  if(result <= total): #Should eventually be changed to be == total
+  
+  if(func == '+'):
+    result += newNum
+    if(result <= total): #Should eventually be changed to be == total
       return True
-  else:
+    else:
       return False
-
-
-def checkSection(section, newNum):
-  section.printSection()
-  total = section.total
-  arr = section.boxes
-  result = arr[0].num
-  print(result)
-  for i in range(len(arr)-1):
-    result += arr[i + 1].num
-  print("Result: " + str(result))
-  result += newNum
-  if(result <= total): #Should eventually be changed to be == total
+  elif(func == '*'):
+    result *= newNum
+    if(result <= total): #Should eventually be changed to be == total
       return True
-  else:
+    else:
       return False
+  elif(func == '-'):
+    #result -= newNum
+    if(result >= 0): #Should eventually be changed to be == total
+      return True
+    else:
+      return False
+  elif(func == '/'):
+    #result /= newNum
+    if(result%1 != 0):
+      return False
+    if(result >= 0): #Should eventually be changed to be == total
+      return True
 
 #if string == '*'  
 def getFactorCombos(numBoxes, total):
@@ -128,16 +135,6 @@ def splitRule(rule):
   #Convert factor from str to int
   factor = int(factorStr)
 
-
-
-
-
-
-
-
-
-
-
 ##CLASSES:
 
 class Section:
@@ -158,6 +155,10 @@ class Section:
       if(self.boxes[i].num == num):
         return False
     return True
+  
+  def sortBoxes(self):
+    self.boxes = sorted(self.boxes, key=lambda x: x.num, reverse=True)
+
 
 
 
@@ -176,13 +177,6 @@ class Box:
 
   def getSection(self):
     return ruleDict[self.letter]
-
-
-
-
-
-
-
 
     
 a = int(input())
