@@ -197,16 +197,15 @@ def splitRule(rule):
 ruleDict = dict.fromkeys(set(sectionRules), "")
 
 for key in sorted(ruleDict):
-  print("{}:".format(key), end = '')
   rule = str(input())
-  ruleDict[key] = rule
+  ruleDict[key] = rule[2::]
   
   #Convert incoming string into two parts: number and operator
   factor = 0
   operator = ""
-  splitRule(rule)
-  # print(factor)
-  # print(operator)
+  splitRule(rule[2::])
+  print(factor)
+  print(operator)
   ruleDict[key] = Section(factor, operator)
 
 # print(ruleDict)
