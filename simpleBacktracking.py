@@ -52,7 +52,7 @@ def checkSection(section, newNum):
       if(func == '+'):
           result += arr[i + 1].num
       elif(func == '-'):
-          result == max(result,arr[i + 1].num) - min(result, arr[i + 1].num)
+          result -= arr[i + 1].num
       elif(func == '*'):
           result *= arr[i + 1].num
       elif(func == '/'):
@@ -72,7 +72,7 @@ def checkSection(section, newNum):
     else:
       return False
   elif(func == '-'):
-    result = max(result, newNum) - min(result, newNum)
+    #result -= newNum
     if(result >= 0): #Should eventually be changed to be == total
       return True
     else:
