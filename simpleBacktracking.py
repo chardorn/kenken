@@ -101,10 +101,10 @@ def getFactorCombos(numBoxes, total):
 
 #if string == "/"
 def getDivCombos(numBoxes, total):
-  global b
+  global divNum
   factors = []
 
-  for i in range(b):
+  for i in range(divNum):
     if(i != 0):
       if(i % total == 0):
         factors.append(i)
