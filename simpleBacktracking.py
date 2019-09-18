@@ -40,7 +40,7 @@ def isSectionSafe(grid, xPos, yPos, num):
   #Total is what they must equal combined
   #Func is either +, -, *, or /
 def checkSection(section, newNum):
-  section.sortBoxes()
+  section.sortBoxes();
   func = section.operator
   total = section.total
   arr = section.boxes
@@ -74,13 +74,13 @@ def checkSection(section, newNum):
     else:
       return False
   elif(func == '-'):
-    result -= newNum
+    #result -= newNum
     if(result >= 0): #Should eventually be changed to be == total
       return True
     else:
       return False
   elif(func == '/'):
-    result /= newNum
+    #result /= newNum
     if(result%1 != 0):
       return False
     if(result >= 0): #Should eventually be changed to be == total
@@ -101,7 +101,7 @@ def getFactorCombos(numBoxes, total):
     if(product == total):
       return factors
 
-#if string == "/"'
+#if string == "/"
 def getDivCombos(numBoxes, total):
   global divNum
   factors = []
