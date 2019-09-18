@@ -57,8 +57,6 @@ def checkSection(section, newNum):
           result *= arr[i + 1].num
       elif(func == '/'):
           result /= arr[i + 1].num
-      # elif(func == None):
-      #     result == total
       print("Result: " + str(result))
   
   if(func == '+'):
@@ -150,7 +148,7 @@ def splitRule(rule):
       #Check for if rule exists or not
       operator += rule[i] or operator == None
   #Convert factor from str to int
-  #factor = int(factorStr) #ERROR
+  factor = int(factorStr)
 
 ##CLASSES:
 
@@ -231,6 +229,7 @@ while(y < a):
 ruleDict = dict.fromkeys(set(sectionRules), "")
 
 for key in sorted(ruleDict):
+  #print("{}:".format(key), end = '')
   rule = str(input())
   ruleDict[key] = rule[2::]
   
@@ -249,6 +248,13 @@ for i in range(a):
   
 for key in sorted(ruleDict):
   ruleDict[key].printSection()
+
+
+
+
+
+
+
 
 
 
@@ -321,5 +327,3 @@ print(a)
 printGrid(zeroInit(fullGrid))
 print(solveSudoku(fullGrid))
 printGrid(fullGrid)
-
-  
