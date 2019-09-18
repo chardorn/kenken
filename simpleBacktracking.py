@@ -74,13 +74,13 @@ def checkSection(section, newNum):
     else:
       return False
   elif(func == '-'):
-    result -= newNum
+    #result -= newNum
     if(result >= 0): #Should eventually be changed to be == total
       return True
     else:
       return False
   elif(func == '/'):
-    result /= newNum
+    #result /= newNum
     if(result%1 != 0):
       return False
     if(result >= 0): #Should eventually be changed to be == total
@@ -101,7 +101,7 @@ def getFactorCombos(numBoxes, total):
     if(product == total):
       return factors
 
-#if string == "/"'
+#if string == "/"
 def getDivCombos(numBoxes, total):
   global divNum
   factors = []
@@ -150,7 +150,7 @@ def splitRule(rule):
       #Check for if rule exists or not
       operator += rule[i] or operator == None
   #Convert factor from str to int
-  factor = int(factorStr)
+  #factor = int(factorStr) #ERROR
 
 ##CLASSES:
 
@@ -249,13 +249,6 @@ for i in range(a):
   
 for key in sorted(ruleDict):
   ruleDict[key].printSection()
-
-
-
-
-
-
-
 
 
 
