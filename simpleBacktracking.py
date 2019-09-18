@@ -40,7 +40,7 @@ def isSectionSafe(grid, xPos, yPos, num):
   #Total is what they must equal combined
   #Func is either +, -, *, or /
 def checkSection(section, newNum):
-  section.sortBoxes()
+  section.sortBoxes();
   func = section.operator
   total = section.total
   arr = section.boxes
