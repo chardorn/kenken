@@ -153,6 +153,36 @@ def isSection(section, newNum):
       #DEBUG
       return True
 
+#if string == '*'  
+def getFactorCombos(numBoxes, total):
+  global a
+  factors = []
+
+  for i in range(a):
+    if(i != 0):
+       if(total % i == 0):
+          factors.append(i)
+  for x in range(factors.length):
+    for y in range(numBoxes):
+      product *= factors[y]
+    if(product == total):
+      return factors
+
+#if string == "/"
+def getDivCombos(numBoxes, total):
+  global divNum
+  factors = []
+
+  for i in range(divNum):
+    if(i != 0):
+      if(i % total == 0):
+        factors.append(i)
+  for x in range(factors.length):
+    for y in range(numBoxes):
+      div == max(div, factors[y]) / min(div, factors[y])
+    if(div == total):
+      return factors
+
 #print grid
 def printGrid(fullGrid):
   global a
