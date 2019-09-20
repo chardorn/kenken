@@ -1,8 +1,6 @@
 import numpy
 import random
 
-global constraintCount = 0
-
 def randomInit(fullGrid, a):
   for y in range(a):
     for x in range(a):
@@ -13,6 +11,7 @@ def randomInit(fullGrid, a):
 def checkRow(box):
   global fullGrid
   global a
+  global constraintCount
 
   for x in range(a):
     if(x == box.xPos):
@@ -383,14 +382,75 @@ def nextNode(grid, l):
 def isSafe(grid, x, y, num):
     return(isRowSafe(grid, x, y, num) and isColumnSafe(grid, x, y, num) and isSectionSafe(grid, x, y, num))
 
+#To swap the numbers in boxes and ultimately reevaluate our utility function
+def swap(grid, box1, box2):
+  tmp = grid[box1.xPos][box1.yPos].num
+  grid[box1.xPos][box1.yPos].num = grid[box2.xPos][box2.yPos].num
+  grid[box2.xPos][box2.yPos].num = tmp
+
+
 #Local search algorithm
-
-
-
-#Current problem: literally most things
+#Current problem: literally nothing works
 def solveSudoku(grid):
   global fullGrid
   global a
+
+  # 'l' is a list variable that keeps the record of row and col in find_empty_location Function     
+  l=[0,0]
+  
+  if(isSafe(grid, xPos, yPos, num)) == False):
+    print(str(l[0]) + " " + str(l[1]))
+    fullGrid = grid
+    return True
+
+  xPos = l[0]
+  yPos = l[1]
+
+  a = len(grid)
+  count = 0
+  max_swaps = a*a*(a-1) / 2
+
+  while(not solveSudoku):
+    randomInit(grid)
+    for x in range(0, max_swaps):
+      b1 = None
+      b2 = None
+      max_violations = 3*a*a
+
+      for i in range(0, a + 1):
+        for j in range(0, a):
+            for k in range(j + 1, a + 1 ):
+              swap(grid, grid[i][j], grid[i][k])
+
+              if not isSafe(grid, xPos, yPos, i) or constraintCount <= max_violations:
+                b1 = grid[i][j]
+                b2 = grid[i][k]
+                max_violations = constraintCount
+                solveSudoku(grid)
+              elif isSafe(grid, xPos, yPos, i):
+                solveSudoku(grid)
+                return True
+              
+              swap(grid, grid[i][j], grid[j][k])
+      if b1 == None:
+        break
+      swap(grid, grid[i][j], grid[i][k])
+      count += 1
+  printGrid(grid)
+  return False
+
+print(a)
+printGrid(randomInit(fullGrid))
+print(solveSudoku(fullGrid))
+printGrid(fullGrid)
+
+
+# #Recursive backtracking algorithm
+# #Current problem: sections are not resetting when backtracking
+# def solveSudoku(grid):
+#   global fullGrid
+#   global a
+
 #   # 'l' is a list variable that keeps the record of row and col in find_empty_location Function     
 #   l=[0,0]
   
