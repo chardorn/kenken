@@ -111,6 +111,7 @@ def isSection(section, newNum):
           return True
       elif(result%newNum != 0):
         return False
+      result = result/newNum
       print("Result: " + str(result))
       print("Total: " + str(total))
 

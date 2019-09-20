@@ -113,6 +113,8 @@ def isSection(section, newNum):
         return False
       #print("Result: " + str(result))
       #print("Total: " + str(total))
+      result = result/newNum
+
 
       if(result == section.total): #Should eventually be changed to be == total
         #print("TRUE")
@@ -332,6 +334,7 @@ def isSafe(grid, x, y, num):
 def solveSudoku(grid):
   global fullGrid
   global a
+  global counter
 
   # 'l' is a list variable that keeps the record of row and col in find_empty_location Function     
   l=[0,0]
@@ -354,9 +357,11 @@ def solveSudoku(grid):
     #print("Num: " + str(num))
 
     if (isSafe(grid, xPos, yPos, num)):
+        counter += 1
         grid[xPos][yPos].num = num
         #print("It's safe")
         if(solveSudoku(grid)):
+          
           return True
         else:
           grid[xPos][yPos].num = 0
@@ -369,8 +374,9 @@ def solveSudoku(grid):
   #print(False)
   return False
 
-
+counter = 0
 print(a)
 printGrid(zeroInit(fullGrid))
 print(solveSudoku(fullGrid))
+print("COUNTER: "+ str(counter))
 printGrid(fullGrid)
