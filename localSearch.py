@@ -388,6 +388,44 @@ def swap(grid, box1, box2):
   grid[box1.xPos][box1.yPos].num = grid[box2.xPos][box2.yPos].num
   grid[box2.xPos][box2.yPos].num = tmp
 
+#Pseudocode for Local Search (hill climbing with simulated annealing)
+# From a random initial state:
+# cost = cost of current state
+# alpha = predetermined constant
+# while cost > 0
+#     Choose a random neighbor n of the current state
+#     new_cost = cost of n
+#     probability = exp^((cost – new_cost)/temperature)
+#     if probability > 1 then
+#         current state = n
+#         cost = new_cost
+#     else
+#         random(0,1)
+#         if random < probability then
+#         current state = n
+#         cost = new_cost
+#     temperature *= alpha
+
+# The 6x6 calcudoku is a similar constraint satisfaction problem as it 
+# also has constraints for which an evaluation function can be applied. A 
+# state for the calcudoku grid is an assignment of numbers 1 to 6 to each 
+# of the 6 rows as seen in figure 4. The evaluation function calculates the 
+# cost by calculating the number of duplicates in each column and adding it 
+# to the cost. For each cage, the result of the numbers is calculated and 
+# compared to the result the cage should have. The difference is then added 
+# to the cost. For example, the first column in figure 4 has 2 duplicates, 
+# this cost of 2 will be added to the total cost for that grid. The top left 
+# cage in figure 4 shows a multiplication operator and a result of 24. The 
+# result of the numbers entered within this cage is equal to 10, this is a 
+# difference of 14. This also will be added to the total cost of the grid. 
+# The neighboring search space of a state is the collection of switches 
+# between two numbers within a row. Thus, the hill climbing algorithm 
+# calculates the cost of each possible switch within the rows. If the cost 
+# of the lowest scoring neighboring state is lower than the current state 
+# cost, then the calcudoku grid is updated. Similar to the 8-queens’ problem, 
+# the algorithm iteratively computes this step until the cost is zero or no 
+# better moves are possible.
+
 
 #Local search algorithm
 #Current problem: literally nothing works
