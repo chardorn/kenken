@@ -23,8 +23,8 @@ def isSectionSafe(grid, xPos, yPos, num):
   global a
   #section = grid[xPos][yPos].getSection()
 
-  grid[xPos][yPos].getSection().printSection()
-  print("With num = " + str(num))
+  #grid[xPos][yPos].getSection().printSection()
+  #print("With num = " + str(num))
 
   
   #check to see if number is already in Section
@@ -48,17 +48,15 @@ def isSection(section, newNum):
   total = section.total
   arr = section.boxes
   result = arr[0].num
-  print(result)
-
-  print("OPERATION: " + func)
 
   if(func == ""):
-    print("FUNCTION IS NONE")
+    #print("FUNCTION IS NONE")
     if(newNum == total):
       return True
     else:
       return False
   
+  #print(result)
   for i in range(len(arr)-1):
       if(arr[i + 1].num ==  0):
         continue
@@ -70,15 +68,15 @@ def isSection(section, newNum):
           result *= arr[i + 1].num
       elif(func == '/'):
           result /= arr[i + 1].num
-  print("1Result: " + str(result))
+  #print("1Result: " + str(result))
 
 
 
 
   #check to see if array is full (minus the last digit)
-  print(str(section.boxes[len(section.boxes) - 2].num))
+  #print(str(section.boxes[len(section.boxes) - 2].num))
   if(section.boxes[len(section.boxes) - 2].num != 0):
-    print("LAST BOX")
+    #print("LAST BOX")
     if(func == '+'):
       result += newNum
 
@@ -93,14 +91,14 @@ def isSection(section, newNum):
       else:
         return False
     elif(func == '-'):
-      print("Result: " + str(result))
+      #print("Result: " + str(result))
       #CHEAP OUT:
       if(result - newNum < 0):
         result = newNum - result
-        print("HERE" + str(result))
+        #print("HERE" + str(result))
       else:
         result -= newNum
-      print("Actual Result: " + str(result))
+      #print("Actual Result: " + str(result))
       if(result == section.total): #Should eventually be changed to be == total
         return True
       else:
@@ -113,11 +111,11 @@ def isSection(section, newNum):
           return True
       elif(result%newNum != 0):
         return False
-      print("Result: " + str(result))
-      print("Total: " + str(total))
+      #print("Result: " + str(result))
+      #print("Total: " + str(total))
 
       if(result == section.total): #Should eventually be changed to be == total
-        print("TRUE")
+        #print("TRUE")
         return True
     
 
@@ -142,57 +140,26 @@ def isSection(section, newNum):
   
       if(result == 0):
         result += newNum
-        print("Result: " + str(result))
+        #print("Result: " + str(result))
         return True
-      print("Result: " + str(result))
+      #print("Result: " + str(result))
       if(result >= section.total):
         return True
       else:
         return False
     elif(func == '/'):
-      print("HERE I AM")
-      print("Total: " + str(section.total))
+      #print("HERE I AM")
+      #print("Total: " + str(section.total))
       #result /= newNum
       if(result == 0):
         result += newNum
-        print("Result: " + str(result))
+        #print("Result: " + str(result))
       if(result%newNum != 0):
         return False
       #if(result >= section.total):
         #return True
       #DEBUG
       return True
-
-def getPossibleVals(section):
-  if(section.operator == '*' or section.operator == '/'):
-    return getFactors(len(section.boxes), section.total)
-
-#if string == '*' or '/' 
-def getFactors(numBoxes, total):
-  print("Num boxes: " + str(numBoxes))
-  print("Total: " + str(total))
-  global a
-  factors = []
-
-  for i in range(a):
-    if(i != 0 and total % i == 0):
-        factors.append(i)
-  return factors
-
-#if string == "/"
-def getDivCombos(numBoxes, total):
-  global divNum
-  factors = []
-
-  for i in range(divNum):
-    if(i != 0):
-      if(i % total == 0):
-        factors.append(i)
-  for x in range(factors.length):
-    for y in range(numBoxes):
-      div == max(div, factors[y]) / min(div, factors[y])
-    if(div == total):
-      return factors
 
 #print grid
 def printGrid(fullGrid):
@@ -238,16 +205,12 @@ class Section:
     self.operator = operator
     self.letter = letter
     self.boxes = []
-    self.possibleVals = []
-
-    
 
 
   def printSection(self):
     print("Section " + self.letter)
     for i in range(len(self.boxes)):
       print("(" + str(self.boxes[i].xPos) +  ", " + str(self.boxes[i].yPos) + ") --> " + str(self.boxes[i].num))
-      print("Possible values: " + str(self.possibleVals))
 
   def alreadyNum(self, num):
     for i in range(len(self.boxes)):
@@ -257,9 +220,6 @@ class Section:
   
   def sortBoxes(self):
     self.boxes = sorted(self.boxes, key=lambda x: x.num, reverse=True)
-
-  def updateSection(self):
-    self.possibleVals = getPossibleVals(self)
 
 
 
@@ -271,10 +231,7 @@ class Box:
     self.letter = letter
     self.xPos = xPos
     self.yPos = yPos
-    self.num = 0
-    self.possibleVals = []
-    for i in range(a):
-      self.possibleVals.append(i)
+    self.num = 0    
 
   def printBox(self):
     print("Box letter is " + self.letter + " at " + str(self.xPos)
@@ -282,9 +239,6 @@ class Box:
 
   def getSection(self):
     return ruleDict[self.letter]
-
-  def remove(self, num):
-    self.possibleVals.remove(num)
 
     
 a = int(input())
@@ -312,7 +266,7 @@ while(y < a):
   x = 0
   while(x < a):
     newBox = Box(b[x], x, y)
-    newBox.printBox()
+    #newBox.printBox()
     fullGrid[x][y] = newBox
     x += 1
   y += 1
@@ -338,11 +292,9 @@ for key in sorted(ruleDict):
 for i in range(a):
   for j in range(a):
     fullGrid[i][j].getSection().boxes.append(fullGrid[i][j])
-
+  
 for key in sorted(ruleDict):
-  ruleDict[key].updateSection()
   ruleDict[key].printSection()
-
 
 
 
@@ -385,7 +337,7 @@ def solveSudoku(grid):
   l=[0,0]
   
   if(nextNode(grid, l) == False):
-    print(str(l[0]) + " " + str(l[1]))
+    #print(str(l[0]) + " " + str(l[1]))
     fullGrid = grid
     return True
 
@@ -393,28 +345,28 @@ def solveSudoku(grid):
   yPos = l[1]
 
 
-  print("CurrentX: " + str(xPos) + " Current Y: " + str(yPos))
+  #print("CurrentX: " + str(xPos) + " Current Y: " + str(yPos))
 
-  printGrid(grid)
+  #printGrid(grid)
 
   for num in range(1,a + 1):
 
-    print("Num: " + str(num))
+    #print("Num: " + str(num))
 
     if (isSafe(grid, xPos, yPos, num)):
         grid[xPos][yPos].num = num
-        print("It's safe")
+        #print("It's safe")
         if(solveSudoku(grid)):
           return True
         else:
           grid[xPos][yPos].num = 0
           
-          printGrid(grid)
+          #printGrid(grid)
 
 
 
-  printGrid(grid)
-  print(False)
+  #printGrid(grid)
+  #print(False)
   return False
 
 

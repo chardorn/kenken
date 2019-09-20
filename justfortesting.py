@@ -24,7 +24,6 @@ def isSectionSafe(grid, xPos, yPos, num):
   #section = grid[xPos][yPos].getSection()
 
   grid[xPos][yPos].getSection().printSection()
-  print("With num = " + str(num))
 
   
   #check to see if number is already in Section
@@ -33,32 +32,20 @@ def isSectionSafe(grid, xPos, yPos, num):
       return False
 
   #check to see if number is valid based on Section Rules
-  if(isSection(grid[xPos][yPos].getSection(), num)):
+  if(checkSection(grid[xPos][yPos].getSection(), num)):
     return True
-
 
 #Checks to see if Section violates its rules
   #Array of length is the numBoxes in the Section
   #Total is what they must equal combined
   #Func is either +, -, *, or /
-def isSection(section, newNum):
-  
+def checkSection(section, newNum):
   section.sortBoxes();
   func = section.operator
   total = section.total
   arr = section.boxes
   result = arr[0].num
   print(result)
-
-  print("OPERATION: " + func)
-
-  if(func == ""):
-    print("FUNCTION IS NONE")
-    if(newNum == total):
-      return True
-    else:
-      return False
-  
   for i in range(len(arr)-1):
       if(arr[i + 1].num ==  0):
         continue
@@ -70,114 +57,47 @@ def isSection(section, newNum):
           result *= arr[i + 1].num
       elif(func == '/'):
           result /= arr[i + 1].num
-  print("1Result: " + str(result))
-
-
-
-
-  #check to see if array is full (minus the last digit)
-  print(str(section.boxes[len(section.boxes) - 2].num))
-  if(section.boxes[len(section.boxes) - 2].num != 0):
-    print("LAST BOX")
-    if(func == '+'):
-      result += newNum
-
-      if(result == total): #Should eventually be changed to be == total
-        return True
-      else:
-        return False
-    elif(func == '*'):
-      result *= newNum
-      if(result == total): #Should eventually be changed to be == total
-        return True
-      else:
-        return False
-    elif(func == '-'):
       print("Result: " + str(result))
-      #CHEAP OUT:
-      if(result - newNum < 0):
-        result = newNum - result
-        print("HERE" + str(result))
-      else:
-        result -= newNum
-      print("Actual Result: " + str(result))
-      if(result == section.total): #Should eventually be changed to be == total
-        return True
-      else:
-        return False
-    elif(func == '/'):
-      if(result < newNum):
-        if(newNum%result != 0):
-          return False
-        else:
-          return True
-      elif(result%newNum != 0):
-        return False
-      print("Result: " + str(result))
-      print("Total: " + str(total))
-
-      if(result == section.total): #Should eventually be changed to be == total
-        print("TRUE")
-        return True
-    
-
-  else:
-    if(func == '+'):
-      result += newNum
-
-      if(result <= total):
-        return True
-      else:
-        return False
-    elif(func == '*'):
-      result *= newNum
-      if(result <= total):
-        return True
-      else:
-        return False
-    elif(func == '-'):
-      #CHEAP OUT:
-      #if(result - newNum < 0):
-        #result = newNum - result
   
-      if(result == 0):
-        result += newNum
-        print("Result: " + str(result))
-        return True
-      print("Result: " + str(result))
-      if(result >= section.total):
-        return True
-      else:
-        return False
-    elif(func == '/'):
-      print("HERE I AM")
-      print("Total: " + str(section.total))
-      #result /= newNum
-      if(result == 0):
-        result += newNum
-        print("Result: " + str(result))
-      if(result%newNum != 0):
-        return False
-      #if(result >= section.total):
-        #return True
-      #DEBUG
+  if(func == '+'):
+    result += newNum
+    if(result <= total): #Should eventually be changed to be == total
+      return True
+    else:
+      return False
+  elif(func == '*'):
+    result *= newNum
+    if(result <= total): #Should eventually be changed to be == total
+      return True
+    else:
+      return False
+  elif(func == '-'):
+    #result -= newNum
+    if(result >= 0): #Should eventually be changed to be == total
+      return True
+    else:
+      return False
+  elif(func == '/'):
+    #result /= newNum
+    if(result%1 != 0):
+      return False
+    if(result >= 0): #Should eventually be changed to be == total
       return True
 
-def getPossibleVals(section):
-  if(section.operator == '*' or section.operator == '/'):
-    return getFactors(len(section.boxes), section.total)
-
-#if string == '*' or '/' 
-def getFactors(numBoxes, total):
-  print("Num boxes: " + str(numBoxes))
-  print("Total: " + str(total))
+#if string == '*'  
+def getFactorCombos(numBoxes, total):
   global a
   factors = []
 
   for i in range(a):
-    if(i != 0 and total % i == 0):
-        factors.append(i)
-  return factors
+    if(i != 0):
+       if(total % i == 0):
+          factors.append(i)
+  for x in range(factors.length):
+    for y in range(numBoxes):
+      product *= factors[y]
+    if(product == total):
+      return factors
 
 #if string == "/"
 def getDivCombos(numBoxes, total):
@@ -238,16 +158,12 @@ class Section:
     self.operator = operator
     self.letter = letter
     self.boxes = []
-    self.possibleVals = []
-
-    
 
 
   def printSection(self):
     print("Section " + self.letter)
     for i in range(len(self.boxes)):
       print("(" + str(self.boxes[i].xPos) +  ", " + str(self.boxes[i].yPos) + ") --> " + str(self.boxes[i].num))
-      print("Possible values: " + str(self.possibleVals))
 
   def alreadyNum(self, num):
     for i in range(len(self.boxes)):
@@ -257,9 +173,6 @@ class Section:
   
   def sortBoxes(self):
     self.boxes = sorted(self.boxes, key=lambda x: x.num, reverse=True)
-
-  def updateSection(self):
-    self.possibleVals = getPossibleVals(self)
 
 
 
@@ -271,10 +184,7 @@ class Box:
     self.letter = letter
     self.xPos = xPos
     self.yPos = yPos
-    self.num = 0
-    self.possibleVals = []
-    for i in range(a):
-      self.possibleVals.append(i)
+    self.num = 0    
 
   def printBox(self):
     print("Box letter is " + self.letter + " at " + str(self.xPos)
@@ -282,9 +192,6 @@ class Box:
 
   def getSection(self):
     return ruleDict[self.letter]
-
-  def remove(self, num):
-    self.possibleVals.remove(num)
 
     
 a = int(input())
@@ -338,11 +245,9 @@ for key in sorted(ruleDict):
 for i in range(a):
   for j in range(a):
     fullGrid[i][j].getSection().boxes.append(fullGrid[i][j])
-
+  
 for key in sorted(ruleDict):
-  ruleDict[key].updateSection()
   ruleDict[key].printSection()
-
 
 
 
@@ -399,11 +304,11 @@ def solveSudoku(grid):
 
   for num in range(1,a + 1):
 
-    print("Num: " + str(num))
+    #print("Num: " + str(num))
 
     if (isSafe(grid, xPos, yPos, num)):
         grid[xPos][yPos].num = num
-        print("It's safe")
+
         if(solveSudoku(grid)):
           return True
         else:
@@ -418,6 +323,10 @@ def solveSudoku(grid):
   return False
 
 
+print(a)
+printGrid(zeroInit(fullGrid))
+print(solveSudoku(fullGrid))
+printGrid(fullGrid)
 print(a)
 printGrid(zeroInit(fullGrid))
 print(solveSudoku(fullGrid))

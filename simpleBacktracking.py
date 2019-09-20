@@ -48,6 +48,14 @@ def isSection(section, newNum):
   total = section.total
   arr = section.boxes
   result = arr[0].num
+
+  if(func == ""):
+    print("FUNCTION IS NONE")
+    if(newNum == total):
+      return True
+    else:
+      return False
+  
   print(result)
   for i in range(len(arr)-1):
       if(arr[i + 1].num ==  0):
