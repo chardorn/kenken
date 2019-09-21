@@ -7,6 +7,22 @@ def randomInit(fullGrid, a):
       fullGrid[x][y].num = random.randint(1,a)
   return fullGrid
 
+#check to see if there are any other of the same letter in that column
+def checkColumns(grid):
+  global fullGrid
+  global a
+  global constraintCount
+
+  for y in range(0, a  - 1):
+    for x in range(0, a):
+    if grid[x][y].num == grid[x][y + 1].num:
+      constraintCount += 1
+  #     continue
+  #   elif(fullGrid[box.xPos][y].num == box.num):
+  #     constraintCount += 1
+  #     # return False
+  # # return True
+
 #check to see if there are any other of the same letter in that row
 def checkRow(box):
   global fullGrid
@@ -18,21 +34,8 @@ def checkRow(box):
       continue
     elif(fullGrid[x][box.yPos].num == box.num):
       constraintCount += 1
-      return False
-  return True
-
-#check to see if there are any other of the same letter in that column
-def checkColumn(box):
-  global fullGrid
-  global a
-
-  for y in range(a):
-    if(y == box.yPos):
-      continue
-    elif(fullGrid[box.xPos][y].num == box.num):
-      constraintCount += 1
-      return False
-  return True
+      # return False
+  # return True
 
 def isColumnSafe(grid, xPos, yPos, num):
   global a
@@ -105,15 +108,17 @@ def isSection(section, newNum):
     if(func == '+'):
       result += newNum
 
-      if(result == total): #Should eventually be changed to be == total
+      if(result == total):
         return True
       else:
+        constraintCount += 1
         return False
     elif(func == '*'):
       result *= newNum
-      if(result == total): #Should eventually be changed to be == total
+      if(result == total):
         return True
       else:
+        constraintCount += 1
         return False
     elif(func == '-'):
       print("Result: " + str(result))
@@ -124,22 +129,25 @@ def isSection(section, newNum):
       else:
         result -= newNum
       print("Actual Result: " + str(result))
-      if(result == section.total): #Should eventually be changed to be == total
+      if(result == section.total):
         return True
       else:
+        constraintCount += 1
         return False
     elif(func == '/'):
       if(result < newNum):
         if(newNum%result != 0):
+          constraintCount += 1
           return False
         else:
           return True
       elif(result%newNum != 0):
+        constraintCount += 1
         return False
       print("Result: " + str(result))
       print("Total: " + str(total))
 
-      if(result == section.total): #Should eventually be changed to be == total
+      if(result == section.total):
         print("TRUE")
         return True
     
@@ -151,12 +159,14 @@ def isSection(section, newNum):
       if(result <= total):
         return True
       else:
+        constraintCount += 1
         return False
     elif(func == '*'):
       result *= newNum
       if(result <= total):
         return True
       else:
+        constraintCount += 1
         return False
     elif(func == '-'):
       #CHEAP OUT:
@@ -171,6 +181,7 @@ def isSection(section, newNum):
       if(result >= section.total):
         return True
       else:
+        constraintCount += 1
         return False
     elif(func == '/'):
       print("HERE I AM")
@@ -180,6 +191,7 @@ def isSection(section, newNum):
         result += newNum
         print("Result: " + str(result))
       if(result%newNum != 0):
+        constraintCount += 1
         return False
       #if(result >= section.total):
         #return True
@@ -371,10 +383,10 @@ def nextNode(grid, l):
   global a
   for x in range(a):
     for y in range(a):
-      if(grid[x][y].num == 0):
-        l[0] = x
-        l[1] = y
-        return True
+      # if(grid[x][y].num == 0):
+      l[0] = x
+      l[1] = y
+      return True
   else:
     return False
 
@@ -426,65 +438,41 @@ def swap(grid, box1, box2):
 # the algorithm iteratively computes this step until the cost is zero or no 
 # better moves are possible.
 
-
-#Local search algorithm
-#Current problem: literally nothing works
-def solveSudoku(grid):
+def solveLocal(grid):
   global fullGrid
   global a
+  global constraintCount
+
+  # First randomly initialize the grid
+  randomInit(fullGrid)
+
+  # Our cost value fn =  num dups in each row/column + difference in section expected and actual value
+  checkColumns(grid) # needs to be fixed
+  ^ this should ultimately increase our constraintCount by the amount of duplicates found in each column of the grid
+
+  sectionDifference(section) # needs to be written
+  ^ this should calculate the current result of the randomized inputs for each section, and compare it to the actual result
+  ^ that difference should also increment the constraintCount variable, which acts as our utility function
 
   # 'l' is a list variable that keeps the record of row and col in find_empty_location Function     
   l=[0,0]
   
-  if(isSafe(grid, xPos, yPos, num)) == False):
-    print(str(l[0]) + " " + str(l[1]))
-    fullGrid = grid
-    return True
-
   xPos = l[0]
   yPos = l[1]
 
-  a = len(grid)
-  count = 0
-  max_swaps = a*a*(a-1) / 2
+  # Our randomized change will be a swap between two numbers within a row
+  swap(num1, num2)
+  ^ this should be able to swap two numbers in a given row, although not quite sure how this would work b/c we really do not
+  ^ have a 2-D array/matrix of numbers, but instead a bunch of sections and boxes (Not sure how to iterate through these effectively)
 
-  while(not solveSudoku):
-    randomInit(grid)
-    for x in range(0, max_swaps):
-      b1 = None
-      b2 = None
-      max_violations = 3*a*a
+  #recalculate cost value fn, if the cost of the lowest scoring neighboring state is lower, update grid
 
-      for i in range(0, a + 1):
-        for j in range(0, a):
-            for k in range(j + 1, a + 1 ):
-              swap(grid, grid[i][j], grid[i][k])
+  #rinse and repeat
 
-              if not isSafe(grid, xPos, yPos, i) or constraintCount <= max_violations:
-                b1 = grid[i][j]
-                b2 = grid[i][k]
-                max_violations = constraintCount
-                solveSudoku(grid)
-              elif isSafe(grid, xPos, yPos, i):
-                solveSudoku(grid)
-                return True
-              
-              swap(grid, grid[i][j], grid[j][k])
-      if b1 == None:
-        break
-      swap(grid, grid[i][j], grid[i][k])
-      count += 1
-  printGrid(grid)
-  return False
+#######################################################################################################
 
-print(a)
-printGrid(randomInit(fullGrid))
-print(solveSudoku(fullGrid))
-printGrid(fullGrid)
-
-
-# #Recursive backtracking algorithm
-# #Current problem: sections are not resetting when backtracking
+# #Local search algorithm
+# #Current problem: literally nothing works
 # def solveSudoku(grid):
 #   global fullGrid
 #   global a
@@ -492,7 +480,7 @@ printGrid(fullGrid)
 #   # 'l' is a list variable that keeps the record of row and col in find_empty_location Function     
 #   l=[0,0]
   
-#   if(nextNode(grid, l) == False):
+#   if(isSafe(grid, xPos, yPos, num)) == False):
 #     print(str(l[0]) + " " + str(l[1]))
 #     fullGrid = grid
 #     return True
@@ -500,33 +488,40 @@ printGrid(fullGrid)
 #   xPos = l[0]
 #   yPos = l[1]
 
+#   a = len(grid)
+#   count = 0
+#   max_swaps = a*a*(a-1) / 2
 
-#   print("CurrentX: " + str(xPos) + " Current Y: " + str(yPos))
+#   while(not solveSudoku):
+#     randomInit(grid)
+#     for x in range(0, max_swaps):
+#       b1 = None
+#       b2 = None
+#       max_violations = 3*a*a
 
+#       for i in range(0, a + 1):
+#         for j in range(0, a):
+#             for k in range(j + 1, a + 1 ):
+#               swap(grid, grid[i][j], grid[i][k])
+
+#               if not isSafe(grid, xPos, yPos, i) or constraintCount <= max_violations:
+#                 b1 = grid[i][j]
+#                 b2 = grid[i][k]
+#                 max_violations = constraintCount
+#                 solveSudoku(grid)
+#               elif isSafe(grid, xPos, yPos, i):
+#                 solveSudoku(grid)
+#                 return True
+              
+#               swap(grid, grid[i][j], grid[j][k])
+#       if b1 == None:
+#         break
+#       swap(grid, grid[i][j], grid[i][k])
+#       count += 1
 #   printGrid(grid)
-
-#   for num in range(1,a + 1):
-
-#     print("Num: " + str(num))
-
-#     if (isSafe(grid, xPos, yPos, num)):
-#         grid[xPos][yPos].num = num
-#         print("It's safe")
-#         if(solveSudoku(grid)):
-#           return True
-#         else:
-#           grid[xPos][yPos].num = 0
-          
-#           printGrid(grid)
-
-
-
-#   printGrid(grid)
-#   print(False)
 #   return False
 
-
 # print(a)
-# printGrid(zeroInit(fullGrid))
+# printGrid(randomInit(fullGrid))
 # print(solveSudoku(fullGrid))
 # printGrid(fullGrid)
