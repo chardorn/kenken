@@ -292,16 +292,23 @@ class Box:
     return ruleDict[self.letter]
 
   def removePossible(self, num):
+    
     if num in self.possibleVals:
+      print(str(self.possibleVals))
       self.possibleVals.remove(num)
+      print(str(self.possibleVals))
+      return True
     else:
       return False
 
   def addPossible(self, num):
+    print(str(self.possibleVals))
     self.possibleVals.append(num)
+    print(str(self.possibleVals))
 
 
-##  def updatePossible(self, grid):
+##  def updatePossible(sel
+# f, grid):
 ##    global a
 ##    newNum = self.num
 ##    #update Sections
@@ -334,19 +341,20 @@ class Box:
 
 #Relationship: 1 for column, 2  for row, 3 for Section
 class Axiom:
-  def __init__(self, box1, box2):
+  def __init__(self, box1, box2, num):
     self.box1 = box1
     self.box2 = box2
+    self.num = num
 
   def runAxiom(self):
-    return self.box2.removePossible(self.box1.num)
+    return self.box2.removePossible(self.num)
 
-  def reverseAxiom(self, num):
-    self.box2.addPossible(num)
+  def reverseAxiom(self):
+    self.box2.addPossible(self.num)
 
   def printAxiom(self):
     print("Axiom: [" + str(self.box1.xPos) + "][" + str(self.box1.yPos) + "] --> ["
-          + str(self.box2.xPos) + "][" + str(self.box2.yPos) + "]")
+          + str(self.box2.xPos) + "][" + str(self.box2.yPos) + "] " + str(self.num))
     
 
 a = int(input())
@@ -446,7 +454,7 @@ def isSafe(grid, x, y, num):
 def solveWithArc(grid):
   global fullGrid
   global a
-  global counter
+  global count
   global axiomQueue
 
 # 'l' is a list variable that keeps the record of row and col in find_empty_location Function     
@@ -471,15 +479,16 @@ def solveWithArc(grid):
 
   
   print("Possible values  of [" + str(xPos) + "][" + str(yPos) + "] are " + str(arr))
-  for i in range(len(theBox.possibleVals)):
-      if(i >= len(theBox.possibleVals)):
+  for i in range(len(arr)):
+      if(i >= len(arr)):
           continue
 
       print("THE NUM BE THIS: " + str(i))
-      num = theBox.possibleVals[i]
-      print("THE VALUE BE THIS: " + str(theBox.possibleVals[i]))
+      num = arr[i]
+      print("THE VALUE BE THIS: " + str(arr[i]))
 
       if (isSafe(grid, xPos, yPos, num)):
+          count += 1
           print(str(num) + " is SAFE!")
           grid[xPos][yPos].num = num
 
@@ -491,22 +500,23 @@ def solveWithArc(grid):
                     #theBox.printBox()
                     #grid[x][yPos].printBox()
                     #Axiom(theBox, grid[x][yPos]).printAxiom()
-                    axiomQueue.put(Axiom(theBox, grid[x][yPos]))
+                    axiomQueue.put(Axiom(theBox, grid[x][yPos], num))
           
           #add axioms for rows
           for y in range(a):
             if(y != yPos):
                 if num in grid[y][xPos].possibleVals:
-                    axiomQueue.put(Axiom(theBox, grid[xPos][y]))
+                    axiomQueue.put(Axiom(theBox, grid[xPos][y], num))
             
           #add axioms for section
-          for i in range(len(arr) - 1):
-            if num in section.boxes[i].possibleVals:
+          for i in range(len(section.boxes) - 1):
+            if num in arr:
                 #section.boxes[i].printBox()
-                axiomQueue.put(Axiom(theBox, section.boxes[i]))
+                axiomQueue.put(Axiom(theBox, section.boxes[i], num))
               
           while(axiomQueue.empty() !=  True):
               axiom = axiomQueue.get()
+              axiom.printAxiom()
               if(axiom.runAxiom()):
                 undoQueue.put(axiom)
 
@@ -514,9 +524,13 @@ def solveWithArc(grid):
               return True
           else:
               while(undoQueue.empty() != True):
-                 undoAxiom = undoQueue.get()
-                 undoAxiom.reverseAxiom(num) #TODO: add something in case invalid!!!
+                undoAxiom = undoQueue.get()
+                undoAxiom.reverseAxiom() 
+                print("UNDO AXIOM:")
+                #undoAxiom.printAxiom()
               theBox.num =  0
+              
+  print("I'm returning False")
   return False
 
   
@@ -525,9 +539,10 @@ def solveWithArc(grid):
 axiomQueue = queue.Queue()
 undoQueue = queue.Queue()
 
+count = 0
 
 print(a)
 printGrid(zeroInit(fullGrid))
 print(solveWithArc(fullGrid))
 #printGrid(fullGrid)
-#print("COUNT: " + str(counter))
+print("COUNT: " + str(count))
