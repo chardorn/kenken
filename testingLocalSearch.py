@@ -1,25 +1,11 @@
 import numpy
 import random
 from random import shuffle
+from functools import reduce
 
 global constraintCount
 
 constraintCount = 0
-
-#check to see if there are any other of the same letter in that column
-#this should ultimately increase our constraintCount by the amount of duplicates found in each column of the grid
-def checkGrid(grid):
-  global fullGrid
-  global a
-  global constraintCount
-
-  for x in range(a):
-    tempArr = []
-    for y in range(a):
-      if grid[x][y].num in tempArr:
-        constraintCount += 1
-      tempArr.append(grid[x][y].num)
-
 
 #check to see if there are any other of the same letter in that row
 def checkRow(box):
@@ -34,197 +20,6 @@ def checkRow(box):
       constraintCount += 1
       # return False
   # return True
-
-def isColumnSafe(grid, xPos, yPos, num):
-  global a
-  for y in range(a):
-    if(y == yPos):
-      continue
-    elif(fullGrid[xPos][y].num == num):
-      return False
-  return True
-
-def isRowSafe(grid, xPos, yPos, num):
-  global a
-  for x in range(a):
-    if(x == xPos):
-      continue
-    elif(fullGrid[x][yPos].num == num):
-      return False
-  return True
-
-def isSectionSafe(grid, xPos, yPos, num):
-  global a
-  #section = grid[xPos][yPos].getSection()
-
-  grid[xPos][yPos].getSection().printSection()
-  print("With num = " + str(num))
-
-  
-  #check to see if number is already in Section
-  for i in range(grid[xPos][yPos].num):
-    if(grid[xPos][yPos].getSection().alreadyNum(num) == False):
-      return False
-
-  #check to see if number is valid based on Section Rules
-  if(isSection(grid[xPos][yPos].getSection(), num)):
-    return True
-
-
-#Checks to see if Section violates its rules
-  #Array of length is the numBoxes in the Section
-  #Total is what they must equal combined
-  #Func is either +, -, *, or /
-def isSection(section, newNum):
-  
-  section.sortBoxes();
-  func = section.operator
-  total = section.total
-  arr = section.boxes
-  result = arr[0].num
-  print(result)
-  for i in range(len(arr)-1):
-      if(arr[i + 1].num ==  0):
-        continue
-      if(func == '+'):
-          result += arr[i + 1].num
-      elif(func == '-'):
-          result -= arr[i + 1].num
-      elif(func == '*'):
-          result *= arr[i + 1].num
-      elif(func == '/'):
-          result /= arr[i + 1].num
-  print("1Result: " + str(result))
-
-
-
-
-  #check to see if array is full (minus the last digit)
-  print(str(section.boxes[len(section.boxes) - 2].num))
-  if(section.boxes[len(section.boxes) - 2].num != 0):
-    print("LAST BOX")
-    if(func == '+'):
-      result += newNum
-
-      if(result == total):
-        return True
-      else:
-        constraintCount += 1
-        return False
-    elif(func == '*'):
-      result *= newNum
-      if(result == total):
-        return True
-      else:
-        constraintCount += 1
-        return False
-    elif(func == '-'):
-      print("Result: " + str(result))
-      #CHEAP OUT:
-      if(result - newNum < 0):
-        result = newNum - result
-        print("HERE" + str(result))
-      else:
-        result -= newNum
-      print("Actual Result: " + str(result))
-      if(result == section.total):
-        return True
-      else:
-        constraintCount += 1
-        return False
-    elif(func == '/'):
-      if(result < newNum):
-        if(newNum%result != 0):
-          constraintCount += 1
-          return False
-        else:
-          return True
-      elif(result%newNum != 0):
-        constraintCount += 1
-        return False
-      print("Result: " + str(result))
-      print("Total: " + str(total))
-
-      if(result == section.total):
-        print("TRUE")
-        return True
-    
-
-  else:
-    if(func == '+'):
-      result += newNum
-
-      if(result <= total):
-        return True
-      else:
-        constraintCount += 1
-        return False
-    elif(func == '*'):
-      result *= newNum
-      if(result <= total):
-        return True
-      else:
-        constraintCount += 1
-        return False
-    elif(func == '-'):
-      #CHEAP OUT:
-      #if(result - newNum < 0):
-        #result = newNum - result
-  
-      if(result == 0):
-        result += newNum
-        print("Result: " + str(result))
-        return True
-      print("Result: " + str(result))
-      if(result >= section.total):
-        return True
-      else:
-        constraintCount += 1
-        return False
-    elif(func == '/'):
-      print("HERE I AM")
-      print("Total: " + str(section.total))
-      #result /= newNum
-      if(result == 0):
-        result += newNum
-        print("Result: " + str(result))
-      if(result%newNum != 0):
-        constraintCount += 1
-        return False
-      #if(result >= section.total):
-        #return True
-      #DEBUG
-      return True
-
-#if string == '*'  
-def getFactorCombos(numBoxes, total):
-  global a
-  factors = []
-
-  for i in range(a):
-    if(i != 0):
-       if(total % i == 0):
-          factors.append(i)
-  for x in range(factors.length):
-    for y in range(numBoxes):
-      product *= factors[y]
-    if(product == total):
-      return factors
-
-#if string == "/"
-def getDivCombos(numBoxes, total):
-  global divNum
-  factors = []
-
-  for i in range(divNum):
-    if(i != 0):
-      if(i % total == 0):
-        factors.append(i)
-  for x in range(factors.length):
-    for y in range(numBoxes):
-      div == max(div, factors[y]) / min(div, factors[y])
-    if(div == total):
-      return factors
 
 #print grid
 def printGrid(fullGrid):
@@ -244,14 +39,6 @@ def randomInit(fullGrid):
       for value in numberList:
           fullGrid[x][y].num = value
   return fullGrid
-
-def zeroInit(fullGrid):
-  global a
-  for y in range(a):
-    for x in range(a):
-      fullGrid[x][y].num = 0
-  return fullGrid
-
 
 def splitRule(rule):
   global factor, operator
@@ -379,21 +166,26 @@ for key in sorted(ruleDict):
 
 #MORE HELPER FUNCTIONS:
 
-#finds the next node that is equal to 0
-def nextNode(grid, l):
+#check to see if there are any other of the same letter in that column
+#this should ultimately increase our constraintCount by the amount of duplicates found in each column of the grid
+def checkGrid(grid):
+  global fullGrid
   global a
+  global constraintCount
+
   for x in range(a):
+    tempArr = []
     for y in range(a):
-      # if(grid[x][y].num == 0):
-      l[0] = x
-      l[1] = y
-      return True
-  else:
-    return False
+      if grid[x][y].num in tempArr:
+        constraintCount += 1
+      tempArr.append(grid[x][y].num)
 
-
-def isSafe(grid, x, y, num):
-    return(isRowSafe(grid, x, y, num) and isColumnSafe(grid, x, y, num) and isSectionSafe(grid, x, y, num))
+  for y in range(a):
+    tempArr = []
+    for x in range(a):
+      if grid[x][y].num in tempArr:
+        constraintCount += 1
+      tempArr.append(grid[x][y].num)
 
 #To swap the numbers in boxes and ultimately reevaluate our utility function
 #This should be able to swap two numbers in a given row, although not quite sure how this would work b/c we really do not
@@ -409,26 +201,39 @@ def swap(grid, box1, box2):
 def sectionDifference(section):
   global constraintCount
   func = section.operator
-  total = section.total
+  goal = section.total
   arr = section.boxes
-  result = arr[0].num
-  for i in range(len(arr)-1):
-    if(arr[i + 1].num ==  0):
-      continue
-    if(func == '+'):
-        result += arr[i + 1].num
-    elif(func == '-'):
-        result = max(result, arr[i + 1].num) - min(result, arr[i + 1].num)
-    elif(func == '*'):
-        result *= arr[i + 1].num
-    elif(func == '/'):
-        result = max(result, arr[i + 1].num)/min(result, arr[i + 1].num)
-    elif(func == ' '):
-        result = total
-  # print(result)
-  # print(total)
+  result = 0
+
+  if (func == '+'):
+      result = reduce(lambda x, y: x + y.num, arr, 0)
+  if (func == '-'):
+      result = max(map(lambda i: i.num, arr)) - min(map(lambda i: i.num, arr))
+  if (func == '/'):
+      result = max(map(lambda i: i.num, arr)) - min(map(lambda i: i.num, arr))
+  if (func == '*'):
+      result = reduce(lambda x, y: x * y.num, arr, 0)
+  if (func == ' '):
+      result = goal
+
+#   result = arr[0].num
+#   for i in range(len(arr)-1):
+#     if(arr[i + 1].num ==  0):
+#       continue
+#     if(func == '+'):
+#         result += arr[i + 1].num
+#     elif(func == '-'):
+#         result = max(result, arr[i + 1].num) - min(result, arr[i + 1].num)
+#     elif(func == '*'):
+#         result *= arr[i + 1].num
+#     elif(func == '/'):
+#         result = max(result, arr[i + 1].num)/min(result, arr[i + 1].num)
+#     elif(func == ' '):
+#         result = total
+#   # print(result)
+#   # print(total)
       
-  constraintCount += int(abs(total - result))
+  constraintCount += int(abs(goal - result))
 
 # Our cost value fn =  num dups in each row/column + difference in section expected and actual value
 def constraintFinder(grid):
@@ -445,6 +250,7 @@ def constraintFinder(grid):
 
   for section in sectionVal:
     sectionDifference(section)
+
   return constraintCount
 
 #Pseudocode for Local Search (hill climbing with simulated annealing)
@@ -485,7 +291,7 @@ def constraintFinder(grid):
 # the algorithm iteratively computes this step until the cost is zero or no 
 # better moves are possible.
 
-def solveLocal(grid):
+def solveLocal(grid, attempts = set([])):
   global fullGrid
   global a
   global constraintCount
@@ -516,6 +322,14 @@ def solveLocal(grid):
       #print(box.num)
       tmp = box.num
       box.num = random.randint(1, a)
+      tries = 0
+      while map(tuple,grid) in attempts:
+        box.num = random.randint(1, a)
+        tries += 1
+        if tries > a:
+            break
+      if tries > a:
+        continue
       printGrid(grid)
       print("Original constraintCount is:", constraintFinder(grid))
       #recalculate cost value fn, if the cost of the lowest scoring neighboring state is lower, update grid
@@ -529,7 +343,8 @@ def solveLocal(grid):
       if count == 0:
         return
       else:
-        solveLocal(grid)
+        attempts.add(map(tuple,grid))
+        solveLocal(grid, attempts)
         continue
 
     # tempGrid = grid
@@ -547,53 +362,3 @@ print(solveLocal(fullGrid))
 printGrid(fullGrid)
 
 #######################################################################################################
-
-# #Local search algorithm
-# #Current problem: literally nothing works
-# def solveSudoku(grid):
-#   global fullGrid
-#   global a
-
-#   # 'l' is a list variable that keeps the record of row and col in find_empty_location Function     
-#   l=[0,0]
-  
-#   if(isSafe(grid, xPos, yPos, num)) == False):
-#     print(str(l[0]) + " " + str(l[1]))
-#     fullGrid = grid
-#     return True
-
-#   xPos = l[0]
-#   yPos = l[1]
-
-#   a = len(grid)
-#   count = 0
-#   max_swaps = a*a*(a-1) / 2
-
-#   while(not solveSudoku):
-#     randomInit(grid)
-#     for x in range(0, max_swaps):
-#       b1 = None
-#       b2 = None
-#       max_violations = 3*a*a
-
-#       for i in range(0, a + 1):
-#         for j in range(0, a):
-#             for k in range(j + 1, a + 1 ):
-#               swap(grid, grid[i][j], grid[i][k])
-
-#               if not isSafe(grid, xPos, yPos, i) or constraintCount <= max_violations:
-#                 b1 = grid[i][j]
-#                 b2 = grid[i][k]
-#                 max_violations = constraintCount
-#                 solveSudoku(grid)
-#               elif isSafe(grid, xPos, yPos, i):
-#                 solveSudoku(grid)
-#                 return True
-              
-#               swap(grid, grid[i][j], grid[j][k])
-#       if b1 == None:
-#         break
-#       swap(grid, grid[i][j], grid[i][k])
-#       count += 1
-#   printGrid(grid)
-#   return False
