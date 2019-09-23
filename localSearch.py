@@ -1,6 +1,10 @@
 import numpy
 import random
 
+global constraintCount
+
+constraintCount = -1
+
 def randomInit(fullGrid, a):
   for y in range(a):
     for x in range(a):
@@ -8,20 +12,19 @@ def randomInit(fullGrid, a):
   return fullGrid
 
 #check to see if there are any other of the same letter in that column
-def checkColumns(grid):
+#this should ultimately increase our constraintCount by the amount of duplicates found in each column of the grid
+def checkGrid(grid):
   global fullGrid
   global a
   global constraintCount
 
-  for y in range(0, a  - 1):
-    for x in range(0, a):
-    if grid[x][y].num == grid[x][y + 1].num:
-      constraintCount += 1
-  #     continue
-  #   elif(fullGrid[box.xPos][y].num == box.num):
-  #     constraintCount += 1
-  #     # return False
-  # # return True
+  for x in range(a):
+    tempArr = []
+    for y in range(a):
+      if grid[x][y].num in tempArr:
+        constraintCount += 1
+      tempArr.append(grid[x][y].num)
+
 
 #check to see if there are any other of the same letter in that row
 def checkRow(box):
@@ -395,10 +398,51 @@ def isSafe(grid, x, y, num):
     return(isRowSafe(grid, x, y, num) and isColumnSafe(grid, x, y, num) and isSectionSafe(grid, x, y, num))
 
 #To swap the numbers in boxes and ultimately reevaluate our utility function
+#This should be able to swap two numbers in a given row, although not quite sure how this would work b/c we really do not
+#Have a 2-D array/matrix of numbers, but instead a bunch of sections and boxes (Not sure how to iterate through these effectively)
+
 def swap(grid, box1, box2):
-  tmp = grid[box1.xPos][box1.yPos].num
-  grid[box1.xPos][box1.yPos].num = grid[box2.xPos][box2.yPos].num
-  grid[box2.xPos][box2.yPos].num = tmp
+  tmp = box1.num
+  box1.num = box2.num
+  box2.num = tmp
+
+#This should calculate the current result of the randomized inputs for each section, and compare it to the actual result
+#That difference should also increment the constraintCount variable, which acts as our utility function
+def sectionDifference(section):
+  global constraintCount
+  func = section.operator
+  total = section.total
+  arr = section.boxes
+  result = arr[0].num
+  for i in range(len(arr)-1):
+    if(arr[i + 1].num ==  0):
+      continue
+    if(func == '+'):
+        result += arr[i + 1].num
+    elif(func == '-'):
+        result = max(result, arr[i + 1].num) - min(result, arr[i + 1].num)
+    elif(func == '*'):
+        result *= arr[i + 1].num
+    elif(func == '/'):
+        result = max(result, arr[i + 1].num)/min(result, arr[i + 1].num)
+    elif(func == ' '):
+        result = total
+    print(result)
+    print(total)
+      
+  constraintCount += int(abs(total - int(result)))
+
+# Our cost value fn =  num dups in each row/column + difference in section expected and actual value
+def constraintFinder(grid):
+  global constraintCount
+  global sectionVal
+  checkGrid(grid)
+
+  sectionVal = list(ruleDict.values())
+
+  for section in sectionVal:
+    sectionDifference(section)
+  return constraintCount
 
 #Pseudocode for Local Search (hill climbing with simulated annealing)
 # From a random initial state:
@@ -442,32 +486,60 @@ def solveLocal(grid):
   global fullGrid
   global a
   global constraintCount
+  global sectionVal
 
-  # First randomly initialize the grid
-  randomInit(fullGrid)
+  # First randomly initialize the grid this should be done outside solveLocal
+  # randomInit(fullGrid)
+  grid = fullGrid
+  constraintCount = 0
+  count = constraintFinder(grid)
 
-  # Our cost value fn =  num dups in each row/column + difference in section expected and actual value
-  checkColumns(grid) # needs to be fixed
-  ^ this should ultimately increase our constraintCount by the amount of duplicates found in each column of the grid
-
-  sectionDifference(section) # needs to be written
-  ^ this should calculate the current result of the randomized inputs for each section, and compare it to the actual result
-  ^ that difference should also increment the constraintCount variable, which acts as our utility function
-
-  # 'l' is a list variable that keeps the record of row and col in find_empty_location Function     
-  l=[0,0]
+  if count == 0:
+    return grid
+    printGrid(grid)
   
-  xPos = l[0]
-  yPos = l[1]
+  # Our cost value fn =  num dups in each row/column + difference in section expected and actual value
+  # checkGrid(grid)
 
-  # Our randomized change will be a swap between two numbers within a row
-  swap(num1, num2)
-  ^ this should be able to swap two numbers in a given row, although not quite sure how this would work b/c we really do not
-  ^ have a 2-D array/matrix of numbers, but instead a bunch of sections and boxes (Not sure how to iterate through these effectively)
+  sectionVal = list(ruleDict.values())
 
-  #recalculate cost value fn, if the cost of the lowest scoring neighboring state is lower, update grid
+  # for(section in sorted(sectionVal)):
+  #   sectionDifference(section)
 
-  #rinse and repeat
+  # Our randomized change will be a random assignment to random box
+  # We should theoretically be able to sort each section by number of constraints (i.e. number of boxes)
+  for section in sectionVal:
+    # print(section.letter)
+    for box in section.boxes:
+      #print(box.num)
+      tmp = box.num
+      box.num = random.randint(1, a)
+      printGrid(grid)
+      print(constraintFinder(grid))
+      #recalculate cost value fn, if the cost of the lowest scoring neighboring state is lower, update grid
+      if constraintFinder(grid) < 1:
+        printGrid(grid)
+        return grid
+      elif constraintFinder(grid) < count:
+        count = constraintFinder(grid)
+        continue
+      if count == 0:
+        break
+      else:
+        box.num = tmp
+        continue
+
+
+
+
+  # #rinse and repeat
+  # solveLocal(grid)
+
+
+print(a)
+printGrid(randomInit(fullGrid))
+print(solveLocal(fullGrid))
+printGrid(fullGrid)
 
 #######################################################################################################
 
@@ -520,8 +592,3 @@ def solveLocal(grid):
 #       count += 1
 #   printGrid(grid)
 #   return False
-
-# print(a)
-# printGrid(randomInit(fullGrid))
-# print(solveSudoku(fullGrid))
-# printGrid(fullGrid)
