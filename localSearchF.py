@@ -66,19 +66,19 @@ class KenKenGame(object):
 
         return constraintCount
 
-    def _get_region_contents(self,
+    def _get_section_contents(self,
             attempt : List[List[int]]) -> Dict[str, List[int]]:
-        regions = {}
+        sections = {}
 
         for k in self._sections:
-            regions[k] = []
+            sections[k] = []
             for (x, y) in self._sections[k]:
-                regions[k].append(attempt[x][y])
+                sections[k].append(attempt[x][y])
 
-        return regions
+        return sections
 
     def _check_rules(self, attempt : List[List[int]]) -> int:
-        contents = self._get_region_contents(attempt)
+        contents = self._get_section_contents(attempt)
 
         constraintCount = 0
 
