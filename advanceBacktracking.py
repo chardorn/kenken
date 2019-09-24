@@ -24,7 +24,7 @@ def isSectionSafe(grid, xPos, yPos, num):
   global a
   #section = grid[xPos][yPos].getSection()
 
-  grid[xPos][yPos].getSection().printSection()
+  #grid[xPos][yPos].getSection().printSection()
 
   
   #check to see if number is already in Section
@@ -48,9 +48,9 @@ def isSection(section, newNum):
   total = section.total
   arr = section.boxes
   result = arr[0].num
-  print(result)
+  #print(result)
 
-  print("OPERATION: " + func)
+  #print("OPERATION: " + func)
 
   if(func == ""):
     if(newNum == total):
@@ -69,15 +69,15 @@ def isSection(section, newNum):
           result *= arr[i + 1].num
       elif(func == '/'):
           result /= arr[i + 1].num
-  print("AResult: " + str(result))
+  #print("AResult: " + str(result))
 
 
 
 
   #check to see if array is full (minus the last digit)
-  print(str(section.boxes[len(section.boxes) - 2].num))
+  #print(str(section.boxes[len(section.boxes) - 2].num))
   if(section.boxes[len(section.boxes) - 2].num != 0):
-    print("LAST BOX")
+    #print("LAST BOX")
     if(func == '+'):
       result += newNum
 
@@ -92,14 +92,14 @@ def isSection(section, newNum):
       else:
         return False
     elif(func == '-'):
-      print("Result: " + str(result))
+      #print("Result: " + str(result))
       #CHEAP OUT:
       if(result - newNum < 0):
         result = newNum - result
-        print("HERE" + str(result))
+        #print("HERE" + str(result))
       else:
         result -= newNum
-      print("Actual Result: " + str(result))
+      #print("Actual Result: " + str(result))
       if(result == section.total): 
         return True
       else:
@@ -114,11 +114,11 @@ def isSection(section, newNum):
         return False
       result = result / newNum
 
-      print("Result: " + str(result))
-      print("Total: " + str(total))
+      #print("Result: " + str(result))
+      #print("Total: " + str(total))
 
       if(result == section.total): #Should eventually be changed to be == total
-        print("TRUE")
+        #print("TRUE")
         return True
     
 
@@ -143,20 +143,20 @@ def isSection(section, newNum):
   
       if(result == 0):
         result += newNum
-        print("Result: " + str(result))
+        #print("Result: " + str(result))
         return True
-      print("Result: " + str(result))
+      #print("Result: " + str(result))
       if(result >= section.total):
         return True
       else:
         return False
     elif(func == '/'):
-      print("HERE I AM")
-      print("Total: " + str(section.total))
+      #print("HERE I AM")
+      #print("Total: " + str(section.total))
       #result /= newNum
       if(result == 0):
         result += newNum
-        print("Result: " + str(result))
+        #print("Result: " + str(result))
       if(result%newNum != 0):
         return False
       #if(result >= section.total):
@@ -177,10 +177,10 @@ def getPossibleVals(section):
       factors.append(i+1)
   return factors
 
-#if string == '*' or '/' 
+#if string == '*'
 def getFactors(numBoxes, total):
-  print("Num boxes: " + str(numBoxes))
-  print("Total: " + str(total))
+  #print("Num boxes: " + str(numBoxes))
+  #print("Total: " + str(total))
   global a
   factors = []
 
@@ -189,20 +189,7 @@ def getFactors(numBoxes, total):
         factors.append(i+1)
   return factors
 
-#if string == "/"
-def getDivCombos(numBoxes, total):
-  global divNum
-  factors = []
 
-  for i in range(divNum):
-    if(i != 0):
-      if(i % total == 0):
-        factors.append(i)
-  for x in range(factors.length):
-    for y in range(numBoxes):
-      div == max(div, factors[y]) / min(div, factors[y])
-    if(div == total):
-      return factors
 
 #print grid
 def printGrid(fullGrid):
@@ -294,17 +281,17 @@ class Box:
   def removePossible(self, num):
     
     if num in self.possibleVals:
-      print(str(self.possibleVals))
+      #print(str(self.possibleVals))
       self.possibleVals.remove(num)
-      print(str(self.possibleVals))
+      #print(str(self.possibleVals))
       return True
     else:
       return False
 
   def addPossible(self, num):
-    print(str(self.possibleVals))
+    #print(str(self.possibleVals))
     self.possibleVals.append(num)
-    print(str(self.possibleVals))
+    #print(str(self.possibleVals))
 
 
 ##  def updatePossible(sel
@@ -439,14 +426,15 @@ def nextNode(grid, l):
   global a
   l[0] = None
   l[1] = None
-  max = 6
+  max = a
   for x in range(a):
     for y in range(a):
-      if(grid[x][y].num == 0 and len(grid[x][y].possibleVals) < max):
+      #print("NUM: " + str(grid[x][y].num) + "LEN: "+ str(len(grid[x][y].possibleVals)) + "MAX: " + str(max))
+      if(grid[x][y].num == 0 and len(grid[x][y].possibleVals) <= max):
         max = len(grid[x][y].possibleVals)
         l[0] = x
         l[1] = y
-
+  #print("NEXT NODE: " + str(l[0]) + " " + str(l[1]))
   if(l[0] == None):
     return False
   else:
@@ -467,7 +455,7 @@ def solveWithArc(grid):
   l=[0,0]
   
   if(nextNode(grid, l) == False):
-    print(str(l[0]) + " " + str(l[1]))
+    #print(str(l[0]) + " " + str(l[1]))
     fullGrid = grid
     return True
 
@@ -479,26 +467,26 @@ def solveWithArc(grid):
 
   arr = sorted(theBox.possibleVals)
 
-  print("CurrentX: " + str(xPos) + " Current Y: " + str(yPos))
+  #print("CurrentX: " + str(xPos) + " Current Y: " + str(yPos))
 
-  printGrid(grid)
+  #printGrid(grid)
 
   
-  print("Possible values  of [" + str(xPos) + "][" + str(yPos) + "] are " + str(arr))
+  #print("Possible values  of [" + str(xPos) + "][" + str(yPos) + "] are " + str(arr))
   for i in range(len(arr)):
       if(i >= len(arr)):
           continue
 
-      print("THE NUM BE THIS: " + str(i))
+      #print("THE NUM BE THIS: " + str(i))
       num = arr[i]
-      print("THE VALUE BE THIS: " + str(arr[i]))
+      #print("THE VALUE BE THIS: " + str(arr[i]))
 
       if (isSafe(grid, xPos, yPos, num)):
           count += 1
-          print(str(num) + " is SAFE!")
+          #print(str(num) + " is SAFE!")
           grid[xPos][yPos].num = num
 
-          printGrid(grid)
+          #printGrid(grid)
           #add axioms for columns
           for x in range(a):
             if(x != xPos):
@@ -522,7 +510,7 @@ def solveWithArc(grid):
               
           while(axiomQueue.empty() !=  True):
               axiom = axiomQueue.get()
-              axiom.printAxiom()
+              #axiom.printAxiom()
               if(axiom.runAxiom()):
                 undoQueue.put(axiom)
 
@@ -532,11 +520,11 @@ def solveWithArc(grid):
               while(undoQueue.empty() != True):
                 undoAxiom = undoQueue.get()
                 undoAxiom.reverseAxiom() 
-                print("UNDO AXIOM:")
+                #print("UNDO AXIOM:")
                 #undoAxiom.printAxiom()
               theBox.num =  0
               
-  print("I'm returning False")
+  #print("I'm returning False")
   return False
 
   
@@ -550,5 +538,5 @@ count = 0
 print(a)
 printGrid(zeroInit(fullGrid))
 print(solveWithArc(fullGrid))
-#printGrid(fullGrid)
+printGrid(fullGrid)
 print("COUNT: " + str(count))
