@@ -1,25 +1,12 @@
 import numpy
 import random
+from copy import deepcopy
 from random import shuffle
 from functools import reduce
+from queue import PriorityQueue
 
 global constraintCount
-
 constraintCount = 0
-
-#check to see if there are any other of the same letter in that row
-def checkRow(box):
-  global fullGrid
-  global a
-  global constraintCount
-
-  for x in range(a):
-    if(x == box.xPos):
-      continue
-    elif(fullGrid[x][box.yPos].num == box.num):
-      constraintCount += 1
-      # return False
-  # return True
 
 #print grid
 def printGrid(fullGrid):
@@ -76,9 +63,6 @@ class Section:
   def sortBoxes(self):
     self.boxes = sorted(self.boxes, key=lambda x: x.num, reverse=True)
 
-
-
-
 class Box:
   
   def __init__(self, letter, xPos, yPos):
@@ -103,7 +87,7 @@ sections = [0 for x in range(a)]
 inputs = []
 boxes = []
 
-
+##INPUTS:
 
 #We'll now begin the Fitness-gram Pacer Test (SectionRules)
 sectionRules = []
@@ -139,8 +123,6 @@ for key in sorted(ruleDict):
   factor = 0
   operator = ""
   splitRule(rule[2::])
-  #print(factor) #FOR TESTING
-  #print(operator) #FOR TESTING
   ruleDict[key] = Section(key, factor, operator)
 
 #Go through and add letters to Sections
@@ -150,19 +132,6 @@ for i in range(a):
   
 for key in sorted(ruleDict):
   ruleDict[key].printSection()
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #MORE HELPER FUNCTIONS:
 
@@ -174,27 +143,18 @@ def checkGrid(grid):
   global constraintCount
 
   for x in range(a):
-    tempArr = []
+    temp = set([])
     for y in range(a):
-      if grid[x][y].num in tempArr:
+      if str(grid[x][y].num) in temp:
         constraintCount += 1
-      tempArr.append(grid[x][y].num)
+      temp.add(str(grid[x][y].num))
 
   for y in range(a):
-    tempArr = []
+    temp = set([])
     for x in range(a):
-      if grid[x][y].num in tempArr:
+      if str(grid[x][y].num) in temp:
         constraintCount += 1
-      tempArr.append(grid[x][y].num)
-
-#To swap the numbers in boxes and ultimately reevaluate our utility function
-#This should be able to swap two numbers in a given row, although not quite sure how this would work b/c we really do not
-#Have a 2-D array/matrix of numbers, but instead a bunch of sections and boxes (Not sure how to iterate through these effectively)
-
-def swap(grid, box1, box2):
-  tmp = box1.num
-  box1.num = box2.num
-  box2.num = tmp
+      temp.add(str(grid[x][y].num))
 
 #This should calculate the current result of the randomized inputs for each section, and compare it to the actual result
 #That difference should also increment the constraintCount variable, which acts as our utility function
@@ -215,23 +175,6 @@ def sectionDifference(section):
       result = reduce(lambda x, y: x * y.num, arr, 0)
   if (func == ' '):
       result = goal
-
-#   result = arr[0].num
-#   for i in range(len(arr)-1):
-#     if(arr[i + 1].num ==  0):
-#       continue
-#     if(func == '+'):
-#         result += arr[i + 1].num
-#     elif(func == '-'):
-#         result = max(result, arr[i + 1].num) - min(result, arr[i + 1].num)
-#     elif(func == '*'):
-#         result *= arr[i + 1].num
-#     elif(func == '/'):
-#         result = max(result, arr[i + 1].num)/min(result, arr[i + 1].num)
-#     elif(func == ' '):
-#         result = total
-#   # print(result)
-#   # print(total)
       
   constraintCount += int(abs(goal - result))
 
@@ -253,23 +196,7 @@ def constraintFinder(grid):
 
   return constraintCount
 
-#Pseudocode for Local Search (hill climbing with simulated annealing)
-# From a random initial state:
-# cost = cost of current state
-# alpha = predetermined constant
-# while cost > 0
-#     Choose a random neighbor n of the current state
-#     new_cost = cost of n
-#     probability = exp^((cost – new_cost)/temperature)
-#     if probability > 1 then
-#         current state = n
-#         cost = new_cost
-#     else
-#         random(0,1)
-#         if random < probability then
-#         current state = n
-#         cost = new_cost
-#     temperature *= alpha
+##MAIN:
 
 # The 6x6 calcudoku is a similar constraint satisfaction problem as it 
 # also has constraints for which an evaluation function can be applied. A 
@@ -291,7 +218,7 @@ def constraintFinder(grid):
 # the algorithm iteratively computes this step until the cost is zero or no 
 # better moves are possible.
 
-def solveLocal(grid, attempts = set([])):
+def solveLocal(grid):
   global fullGrid
   global a
   global constraintCount
@@ -299,62 +226,39 @@ def solveLocal(grid, attempts = set([])):
 
   # First randomly initialize the grid this should be done outside solveLocal
   # randomInit(fullGrid)
-  grid = fullGrid
-  count = constraintFinder(grid)
+  frontier = []
+  past_attempts = set([])
 
-  if count == 0:
-    return grid
-    printGrid(grid)
+  initialization = grid
+  init_count = constraintFinder(grid)
+  past_attempts.add(map(tuple,initialization))
+  frontier.append((initialization))
   
-  # Our cost value fn =  num dups in each row/column + difference in section expected and actual value
-  # checkGrid(grid)
-
-  sectionVal = list(ruleDict.values())
-
-  # for(section in sorted(sectionVal)):
-  #   sectionDifference(section)
-
-  # Our randomized change will be a random assignment to random box
-  # We should theoretically be able to sort each section by number of constraints (i.e. number of boxes)
-  for section in sectionVal:
-    # print(section.letter)
-    for box in section.boxes:
-      #print(box.num)
-      tmp = box.num
-      box.num = random.randint(1, a)
-      tries = 0
-      while map(tuple,grid) in attempts:
-        box.num = random.randint(1, a)
-        tries += 1
-        if tries > a:
-            break
-      if tries > a:
-        continue
-      printGrid(grid)
-      print("Original constraintCount is:", constraintFinder(grid))
-      #recalculate cost value fn, if the cost of the lowest scoring neighboring state is lower, update grid
-      if constraintFinder(grid) == 0:
-        printGrid(grid)
-        return
-      elif constraintFinder(grid) <= count:
-        count = constraintFinder(grid)
-        print(count)
-        continue
-      if count == 0:
-        return
-      else:
-        attempts.add(map(tuple,grid))
-        solveLocal(grid, attempts)
-        continue
-
-    # tempGrid = grid
-    # if constraintFinder(grid) != 0:
-    #   solveLocal(tempGrid)
+  solution = None
 
 
-  # #rinse and repeat
-  # solveLocal(grid)
+  while len(frontier) > 0:
+    attempt = frontier.pop()
+    n = len(attempt)
 
+    score = constraintFinder(attempt)
+
+    if score == 0:
+      solution = attempt
+      break
+    # Our randomized change will be a random assignment to random box
+    # We should theoretically be able to sort each section by number of constraints (i.e. number of boxes)
+    for y in range(n):
+      for x in range(n):
+        for delta in range(n):
+          alteredGrid = deepcopy(grid)
+          alteredGrid[x][y].num = (((alteredGrid[x][y].num - 1) + delta) % n) + 1
+          if map(tuple, alteredGrid) not in past_attempts:
+            past_attempts.add(map(tuple, alteredGrid))
+            alteredCount = constraintFinder(alteredGrid)
+            frontier.append((alteredGrid))
+  fullGrid = solution
+  return solution
 
 print(a)
 printGrid(randomInit(fullGrid))
