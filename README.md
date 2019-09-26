@@ -15,11 +15,11 @@ Run mainLocal.py with Python 3
 Input for all 3:
 Exact input as in the problem documentation
 
-n
-xxx
-xxx
-xxx
-A:
-B:
-C:
+n<br/>
+xxx<br/>
+xxx<br/>
+xxx<br/>
+A:<br/>
+B:<br/>
+C:<br/>
 ...
