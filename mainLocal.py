@@ -52,9 +52,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     specs, game = parse_input()
-    solver = HeuristicsLocalSearchKenKenSolver(game)
+    solver = RowSwapLocalSearchKenKenSolver(game)
 
-    #solution = solver.solve()
+    # solution = solver.solve()
     solution = p_solve(solver, 4)
 
     if solution is not None:

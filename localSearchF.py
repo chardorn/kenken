@@ -34,6 +34,21 @@ class KenKenGame(object):
         return [[r.randint(1, self._n) for _ in range(self._n)] for _ in
                 range(self._n)]
 
+    def get_constrain_solution(self) -> List[List[int]]:
+        board = [[1 for _ in range(self._n)] for _ in range(self._n)]
+        for i in range(self._n):
+            board[i] = list(range(1, self._n + 1))              
+            r.shuffle(board[i])
+        return board
+
+    def swap_nums_in_rows(self, attempt : List[List[int]]):
+        for delta in range(self._n):
+            for row in attempt:
+                index = range(len(row))
+                i1, i2 = r.sample(index, 2)
+                row[i1], row[i2] = row[i2], row[i1]
+        
+
     #Validations on size of grid and inputs of each section
     def _is_correct_size(self, attempt : List[List[int]]) -> bool:
         return len(attempt) == self._n and len(attempt[0]) == self._n
@@ -234,6 +249,57 @@ class HeuristicsLocalSearchKenKenSolver(AbsKenKenSolver):
 
         if solution is None:
             print("Oops. No solution.")
+        print(iterCount)
+        return solution
+
+class RowSwapLocalSearchKenKenSolver(AbsKenKenSolver):
+    def __init__(self,
+            game : "KenKenGame",
+            tries_before_new_init : int = 1000000,
+            num_new_inits_before_giving_up : int = 1000) -> "LocalSearchKenKenSolver":
+        self._game = game
+        self._tries_before_new_init = tries_before_new_init
+        self._num_new_inits_before_giving_up = num_new_inits_before_giving_up
+
+    def solve(self) -> List[List[int]]:
+        global iterCount
+        game = self._game
+        frontier = PriorityQueue()
+        past_attempts = set([])
+
+        initialization = game.get_constrain_solution()
+        init_score = game.score_attempt(initialization)
+        past_attempts.add(game.get_str_repr(initialization))
+        frontier.put((init_score, initialization))
+
+        solution = None
+        iterCount = 0
+
+        while not frontier.empty():
+            score, attempt = frontier.get()
+            n = len(attempt)
+
+            if score == 0:
+                solution = attempt
+                break
+                        
+            for x in range(n):
+                for y in range(n):
+                    # for delta in range(n):
+                    altered = deepcopy(attempt)
+                    game.swap_nums_in_rows(altered)
+                    iterCount += 1
+                    if(iterCount > n**2 / 2):
+                        #Restart with new random grid
+                        altered = game.get_constrain_solution()
+                        iterCount += 1
+                    if game.get_str_repr(altered) not in past_attempts:
+                        past_attempts.add(game.get_str_repr(altered))
+                        a_score = game.score_attempt(altered)
+                        frontier.put((a_score, altered))
+
+        if solution is None:
+            print("Oops. No solution found yet.")
         print(iterCount)
         return solution
 
