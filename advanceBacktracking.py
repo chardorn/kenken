@@ -1,56 +1,54 @@
-import numpy
 import random
 import queue 
 
+#
+#HELPER FUNCTIONS
+#
+
+#Returns false if num already exists in column
 def isColumnSafe(grid, xPos, yPos, num):
   global a
   for y in range(a):
     if(y == yPos):
       continue
-    elif(fullGrid[xPos][y].num == num):
+    elif(grid[xPos][y].num == num):
       return False
   return True
 
+#Returns false if num already exists in row
 def isRowSafe(grid, xPos, yPos, num):
   global a
   for x in range(a):
     if(x == xPos):
       continue
-    elif(fullGrid[x][yPos].num == num):
+    elif(grid[x][yPos].num == num):
       return False
   return True
 
+#Returns false if num already exists in Section or if num violates section rules
 def isSectionSafe(grid, xPos, yPos, num):
   global a
-  #section = grid[xPos][yPos].getSection()
 
-  #grid[xPos][yPos].getSection().printSection()
-
-  
   #check to see if number is already in Section
   for i in range(grid[xPos][yPos].num):
     if(grid[xPos][yPos].getSection().alreadyNum(num) == False):
       return False
 
   #check to see if number is valid based on Section Rules
-  if(isSection(grid[xPos][yPos].getSection(), num)):
+  if(checkSectionRules(grid[xPos][yPos].getSection(), num)):
     return True
 
 
-#Checks to see if Section violates its rules
+  #Checks to see if Section violates its rules if newNum is added
   #Array of length is the numBoxes in the Section
   #Total is what they must equal combined
   #Func is either +, -, *, or /
-def isSection(section, newNum):
-  
+def checkSectionRules(section, newNum):
   section.sortBoxes();
   func = section.operator
   total = section.total
   arr = section.boxes
   result = arr[0].num
-  #print(result)
-
-  #print("OPERATION: " + func)
 
   if(func == ""):
     if(newNum == total):
@@ -69,15 +67,14 @@ def isSection(section, newNum):
           result *= arr[i + 1].num
       elif(func == '/'):
           result /= arr[i + 1].num
-  #print("AResult: " + str(result))
 
 
 
 
-  #check to see if array is full (minus the last digit)
-  #print(str(section.boxes[len(section.boxes) - 2].num))
+
+  #if adding another number will make the array full, check that the total == result
   if(section.boxes[len(section.boxes) - 2].num != 0):
-    #print("LAST BOX")
+
     if(func == '+'):
       result += newNum
 
@@ -92,14 +89,13 @@ def isSection(section, newNum):
       else:
         return False
     elif(func == '-'):
-      #print("Result: " + str(result))
-      #CHEAP OUT:
+
       if(result - newNum < 0):
         result = newNum - result
-        #print("HERE" + str(result))
+
       else:
         result -= newNum
-      #print("Actual Result: " + str(result))
+
       if(result == section.total): 
         return True
       else:
@@ -114,11 +110,8 @@ def isSection(section, newNum):
         return False
       result = result / newNum
 
-      #print("Result: " + str(result))
-      #print("Total: " + str(total))
 
-      if(result == section.total): #Should eventually be changed to be == total
-        #print("TRUE")
+      if(result == section.total):
         return True
     
 
@@ -137,33 +130,29 @@ def isSection(section, newNum):
       else:
         return False
     elif(func == '-'):
-      #CHEAP OUT:
-      #if(result - newNum < 0):
-        #result = newNum - result
+
   
       if(result == 0):
         result += newNum
-        #print("Result: " + str(result))
+
         return True
-      #print("Result: " + str(result))
+
       if(result >= section.total):
         return True
       else:
         return False
     elif(func == '/'):
-      #print("HERE I AM")
-      #print("Total: " + str(section.total))
-      #result /= newNum
+
       if(result == 0):
         result += newNum
-        #print("Result: " + str(result))
+
       if(result%newNum != 0):
         return False
-      #if(result >= section.total):
-        #return True
-      #DEBUG
+
       return True
 
+#Parameters: section to find possible values of 
+#Return array of factors based on total of section
 def getPossibleVals(section):
   factors = []
   if(section.operator == '*'):
@@ -179,8 +168,6 @@ def getPossibleVals(section):
 
 #if string == '*'
 def getFactors(numBoxes, total):
-  #print("Num boxes: " + str(numBoxes))
-  #print("Total: " + str(total))
   global a
   factors = []
 
@@ -191,7 +178,7 @@ def getFactors(numBoxes, total):
 
 
 
-#print grid
+#print grid function
 def printGrid(fullGrid):
   global a
   for y in range(a):
@@ -200,13 +187,7 @@ def printGrid(fullGrid):
       print(fullGrid[x][y].num, end = ' ')
   print("")
 
-def randomInit(fullGrid):
-  global a
-  for y in range(a):
-    for x in range(a):
-      fullGrid[x][y].num = random.randint(1,a)
-  return fullGrid
-
+#Initialize given grid so all Box.num are set to 0
 def zeroInit(fullGrid):
   global a
   for y in range(a):
@@ -215,6 +196,7 @@ def zeroInit(fullGrid):
   return fullGrid
 
 
+#Used to take input and turn into a factor and an operator
 def splitRule(rule):
   global factor, operator
   factorStr = ""
@@ -227,7 +209,9 @@ def splitRule(rule):
   #Convert factor from str to int
   factor = int(factorStr)
 
+#
 ##CLASSES:
+#
 
 class Section:
   def __init__(self, letter, total, operator):
@@ -237,25 +221,24 @@ class Section:
     self.boxes = []
     self.possibleVals = []
 
-    
-
-
   def printSection(self):
     print("Section " + self.letter)
     for i in range(len(self.boxes)):
       print("(" + str(self.boxes[i].xPos) +  ", " + str(self.boxes[i].yPos) + ") --> " + str(self.boxes[i].num))
     print("Total: " + str(self.total))
-    #print("Possible values  of [" + str(self.boxes[i].xPos) + "][" + str(self.boxes[i].yPos) + "] are " + str(self.possibleVals))
 
+  #Returns true if num already exists in array possibleVals
   def alreadyNum(self, num):
     for i in range(len(self.boxes)):
       if(self.boxes[i].num == num):
         return False
     return True
   
+  #Modifies self.boxes so the values are in ascending order
   def sortBoxes(self):
     self.boxes = sorted(self.boxes, key=lambda x: x.num, reverse=True)
 
+  #Used to add possibleVals to all the number after the section input is given
   def updateSection(self):
     self.possibleVals = getPossibleVals(self)
 
@@ -267,9 +250,6 @@ class Box:
     self.xPos = xPos
     self.yPos = yPos
     self.num = 0
-    
-    #for i in range(a):
-      #self.possibleVals.append(i)
 
   def printBox(self):
     print("Box letter is " + self.letter + " at " + str(self.xPos)
@@ -278,64 +258,40 @@ class Box:
   def getSection(self):
     return ruleDict[self.letter]
 
+  #Returns false if num is not in array possibleVals
+  #Returns true if num is sucessfully removed from possibleVals
   def removePossible(self, num):
-    
     if num in self.possibleVals:
-      #print(str(self.possibleVals))
       self.possibleVals.remove(num)
-      #print(str(self.possibleVals))
       return True
     else:
       return False
 
+  #Adds num to possibleVals
   def addPossible(self, num):
-    #print(str(self.possibleVals))
     self.possibleVals.append(num)
-    #print(str(self.possibleVals))
 
-
-##  def updatePossible(sel
-# f, grid):
-##    global a
-##    newNum = self.num
-##    #update Sections
-##    
-##    #updateColumn
-##    for x in range(a):
-##        fullGrid[x][self.yPos].removePossible(newNum)
-##
-##    #updateRows
-##    for y in range(a):
-##        fullGrid[self.xPos][y].removePossible(newNum)
-##
-##  def UNupdatePossible(self, grid):
-##    newNum = self.num
-##    #update Sections
-##    
-##    #updateColumn
-##    for x in range(a):
-##      fullGrid[x][self.yPos].possibleVals.append(newNum)
-##
-##    #updateRows
-##    for y in range(a):
-##      fullGrid[self.xPos][y].possibleVals.append(newNum)
-
-
+  #Used to add possibleVals to all the number after the section input is given
   def initPossibleVals(self):
     self.possibleVals = getPossibleVals(self.getSection())
 
 
-
-#Relationship: 1 for column, 2  for row, 3 for Section
+#Parameters: box1 one is modified and possibleVals of box2 must be changed in response
+            #num is the value that was changed from box1
 class Axiom:
   def __init__(self, box1, box2, num):
     self.box1 = box1
     self.box2 = box2
     self.num = num
 
-  def runAxiom(self):
-    return self.box2.removePossible(self.num)
+  #Return true if num is present in possibleVals and is sucesfully removed, false otherwise
+  def runAxiom(self, grid):
+    if(advancedCheckSection(grid, self.box1, self.box2)):
+      return self.box2.removePossible(self.num)
+    else:
+      return False
 
+  #Add num back to possibleVals
   def reverseAxiom(self):
     self.box2.addPossible(self.num)
 
@@ -343,6 +299,11 @@ class Axiom:
     print("Axiom: [" + str(self.box1.xPos) + "][" + str(self.box1.yPos) + "] --> ["
           + str(self.box2.xPos) + "][" + str(self.box2.yPos) + "] " + str(self.num))
     
+
+#
+# GET INPUT
+#
+
 
 a = int(input())
 fullGrid = [[0 for x in range(a)] for y in range(a)]
@@ -380,7 +341,7 @@ while(y < a):
 ruleDict = dict.fromkeys(set(sectionRules), "")
 
 for key in sorted(ruleDict):
-  #print("{}:".format(key), end = '')
+
   rule = str(input())
   ruleDict[key] = rule[2::]
   
@@ -388,8 +349,7 @@ for key in sorted(ruleDict):
   factor = 0
   operator = ""
   splitRule(rule[2::])
-  #print(factor) #FOR TESTING
-  #print(operator) #FOR TESTING
+
   ruleDict[key] = Section(key, factor, operator)
 
 #Go through and add letters to Sections
@@ -406,41 +366,48 @@ for i in range(a):
   for j in range(a):
     fullGrid[i][j].initPossibleVals()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+#
 #MORE HELPER FUNCTIONS:
+#
 
 #finds the next node that is equal to 0
-def nextNode(grid, l):
+def advancedNextNode(grid, l):
   global a
   l[0] = None
   l[1] = None
   max = a
   for x in range(a):
     for y in range(a):
-      #print("NUM: " + str(grid[x][y].num) + "LEN: "+ str(len(grid[x][y].possibleVals)) + "MAX: " + str(max))
       if(grid[x][y].num == 0 and len(grid[x][y].possibleVals) <= max):
         max = len(grid[x][y].possibleVals)
         l[0] = x
         l[1] = y
-  #print("NEXT NODE: " + str(l[0]) + " " + str(l[1]))
+
   if(l[0] == None):
     return False
   else:
     return True
 
+#checks box2 to of an axiom to see if it causes any other values to become invalid
+#Removes any possibleVals that have become invalid due to axiom that was run
+def advancedCheckSection(grid, box1, box2):
+  atLeastOneValue = False
+  section = box2.getSection()
+  arr = box2.possibleVals
+  
+  #Iterate through possibleVals and check if isSafe()
+  for i in range(len(arr) - 1):
+    if(i >= len(arr) - 1):
+      continue
+    arr = box2.possibleVals
+    if(isSafe(grid, box2.xPos, box2.yPos, arr[i])):
+      atLeastOneValue = True
+    else:
+      
+      undoQueue.put(Axiom(box1, box2, arr[i]))
+      box2.possibleVals.remove(arr[i])
 
+#Checks row, column, and section with new num
 def isSafe(grid, x, y, num):
     return(isRowSafe(grid, x, y, num) and isColumnSafe(grid, x, y, num) and isSectionSafe(grid, x, y, num))
 
@@ -450,12 +417,14 @@ def solveWithArc(grid):
   global a
   global count
   global axiomQueue
+  #printGrid(grid)
+  count += 1
 
 # 'l' is a list variable that keeps the record of row and col in find_empty_location Function     
   l=[0,0]
   
-  if(nextNode(grid, l) == False):
-    #print(str(l[0]) + " " + str(l[1]))
+  if(advancedNextNode(grid, l) == False):
+
     fullGrid = grid
     return True
 
@@ -467,67 +436,57 @@ def solveWithArc(grid):
 
   arr = sorted(theBox.possibleVals)
 
-  #print("CurrentX: " + str(xPos) + " Current Y: " + str(yPos))
-
-  #printGrid(grid)
-
-  
-  #print("Possible values  of [" + str(xPos) + "][" + str(yPos) + "] are " + str(arr))
   for i in range(len(arr)):
       if(i >= len(arr)):
           continue
 
-      #print("THE NUM BE THIS: " + str(i))
       num = arr[i]
-      #print("THE VALUE BE THIS: " + str(arr[i]))
 
+      #Check column, row, and section to see if number is valid
       if (isSafe(grid, xPos, yPos, num)):
-          count += 1
-          #print(str(num) + " is SAFE!")
           grid[xPos][yPos].num = num
 
-          #printGrid(grid)
-          #add axioms for columns
+          #add axioms for columns to queue
           for x in range(a):
             if(x != xPos):
                 if num in grid[x][yPos].possibleVals:
-                    #theBox.printBox()
-                    #grid[x][yPos].printBox()
-                    #Axiom(theBox, grid[x][yPos]).printAxiom()
+
                     axiomQueue.put(Axiom(theBox, grid[x][yPos], num))
           
-          #add axioms for rows
+          #add axioms for rows to queue
           for y in range(a):
             if(y != yPos):
                 if num in grid[y][xPos].possibleVals:
                     axiomQueue.put(Axiom(theBox, grid[xPos][y], num))
             
-          #add axioms for section
+          #add axioms for section to queue
           for i in range(len(section.boxes) - 1):
             if num in arr:
-                #section.boxes[i].printBox()
                 axiomQueue.put(Axiom(theBox, section.boxes[i], num))
               
+          #Iterate through all axioms in queue 
+          #If runAxiom returns true (meaning the num did exist and was removed from possibleVals) add the axiom to undoQueue
           while(axiomQueue.empty() !=  True):
               axiom = axiomQueue.get()
-              #axiom.printAxiom()
-              if(axiom.runAxiom()):
+              if(axiom.runAxiom(grid)):
                 undoQueue.put(axiom)
 
+          #Recursively call solveWithArc to go to next node
           if(solveWithArc(grid)):
               return True
           else:
+              #If solveWithArc returns false, undo the arc consistency that was previously carried out
+              #Iterate through undoqueue and add back values to possibleVals
               while(undoQueue.empty() != True):
                 undoAxiom = undoQueue.get()
                 undoAxiom.reverseAxiom() 
-                #print("UNDO AXIOM:")
-                #undoAxiom.printAxiom()
               theBox.num =  0
               
-  #print("I'm returning False")
   return False
 
-  
+  #
+  #MAIN CODE:
+  #
 
 
 axiomQueue = queue.Queue()
@@ -535,8 +494,9 @@ undoQueue = queue.Queue()
 
 count = 0
 
-print(a)
+print("Grid initialized to all 0s:")
 printGrid(zeroInit(fullGrid))
+
 print(solveWithArc(fullGrid))
 printGrid(fullGrid)
-print("COUNT: " + str(count))
+print("FINAL COUNT: " + str(count))

@@ -1,6 +1,6 @@
-import numpy
 import random
 
+#Returns false if num already exists in column
 def isColumnSafe(grid, xPos, yPos, num):
   global a
   for y in range(a):
@@ -10,6 +10,7 @@ def isColumnSafe(grid, xPos, yPos, num):
       return False
   return True
 
+#Returns false if num already exists in row
 def isRowSafe(grid, xPos, yPos, num):
   global a
   for x in range(a):
@@ -19,20 +20,16 @@ def isRowSafe(grid, xPos, yPos, num):
       return False
   return True
 
+#Returns false if num already exists in Section or if num violates section rules
 def isSectionSafe(grid, xPos, yPos, num):
   global a
-  #section = grid[xPos][yPos].getSection()
-
-  grid[xPos][yPos].getSection().printSection()
-  print("With num = " + str(num))
-
   
-  #check to see if number is already in Section
+  #Check to see if number is already in Section
   for i in range(grid[xPos][yPos].num):
     if(grid[xPos][yPos].getSection().alreadyNum(num) == False):
       return False
 
-  #check to see if number is valid based on Section Rules
+  #Check to see if number is valid based on Section Rules
   if(isSection(grid[xPos][yPos].getSection(), num)):
     return True
 
@@ -50,13 +47,14 @@ def isSection(section, newNum):
   result = arr[0].num
 
   if(func == ""):
-    print("FUNCTION IS NONE")
+
     if(newNum == total):
       return True
     else:
       return False
   
-  print(result)
+#total all of the values that  already exist in the array
+
   for i in range(len(arr)-1):
       if(arr[i + 1].num ==  0):
         continue
@@ -68,38 +66,32 @@ def isSection(section, newNum):
           result *= arr[i + 1].num
       elif(func == '/'):
           result /= arr[i + 1].num
-  print("1Result: " + str(result))
 
 
 
 
-  #check to see if array is full (minus the last digit)
-  print(str(section.boxes[len(section.boxes) - 2].num))
+  #if array is full (minus the last digit)
   if(section.boxes[len(section.boxes) - 2].num != 0):
-    print("LAST BOX")
+
     if(func == '+'):
       result += newNum
 
-      if(result == total): #Should eventually be changed to be == total
+      if(result == total): 
         return True
       else:
         return False
     elif(func == '*'):
       result *= newNum
-      if(result == total): #Should eventually be changed to be == total
+      if(result == total): 
         return True
       else:
         return False
     elif(func == '-'):
-      print("Result: " + str(result))
-      #CHEAP OUT:
       if(result - newNum < 0):
         result = newNum - result
-        print("HERE" + str(result))
       else:
         result -= newNum
-      print("Actual Result: " + str(result))
-      if(result == section.total): #Should eventually be changed to be == total
+      if(result == section.total): 
         return True
       else:
         return False
@@ -112,11 +104,8 @@ def isSection(section, newNum):
       elif(result%newNum != 0):
         return False
       result = result/newNum
-      print("Result: " + str(result))
-      print("Total: " + str(total))
 
-      if(result == section.total): #Should eventually be changed to be == total
-        print("TRUE")
+      if(result == section.total):
         return True
     
 
@@ -135,34 +124,25 @@ def isSection(section, newNum):
       else:
         return False
     elif(func == '-'):
-      #CHEAP OUT:
-      #if(result - newNum < 0):
-        #result = newNum - result
   
       if(result == 0):
         result += newNum
-        print("Result: " + str(result))
+
         return True
-      print("Result: " + str(result))
+
       if(result >= section.total):
         return True
       else:
         return False
     elif(func == '/'):
-      print("HERE I AM")
-      print("Total: " + str(section.total))
-      #result /= newNum
       if(result == 0):
         result += newNum
-        print("Result: " + str(result))
       if(result%newNum != 0):
         return False
-      #if(result >= section.total):
-        #return True
-      #DEBUG
+
       return True
 
-#print grid
+#print Grid
 def printGrid(fullGrid):
   global a
   for y in range(a):
@@ -170,13 +150,6 @@ def printGrid(fullGrid):
     for x in range(a):
       print(fullGrid[x][y].num, end = ' ')
   print("")
-
-def randomInit(fullGrid):
-  global a
-  for y in range(a):
-    for x in range(a):
-      fullGrid[x][y].num = random.randint(1,a)
-  return fullGrid
 
 def zeroInit(fullGrid):
   global a
@@ -219,6 +192,7 @@ class Section:
         return False
     return True
   
+    #Modifies self.boxes so the values are in ascending order
   def sortBoxes(self):
     self.boxes = sorted(self.boxes, key=lambda x: x.num, reverse=True)
 
@@ -267,7 +241,6 @@ while(y < a):
   x = 0
   while(x < a):
     newBox = Box(b[x], x, y)
-    newBox.printBox()
     fullGrid[x][y] = newBox
     x += 1
   y += 1
@@ -277,7 +250,6 @@ while(y < a):
 ruleDict = dict.fromkeys(set(sectionRules), "")
 
 for key in sorted(ruleDict):
-  #print("{}:".format(key), end = '')
   rule = str(input())
   ruleDict[key] = rule[2::]
   
@@ -285,8 +257,7 @@ for key in sorted(ruleDict):
   factor = 0
   operator = ""
   splitRule(rule[2::])
-  #print(factor) #FOR TESTING
-  #print(operator) #FOR TESTING
+
   ruleDict[key] = Section(key, factor, operator)
 
 #Go through and add letters to Sections
@@ -296,16 +267,6 @@ for i in range(a):
   
 for key in sorted(ruleDict):
   ruleDict[key].printSection()
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -339,42 +300,31 @@ def solveSudoku(grid):
   l=[0,0]
   
   if(nextNode(grid, l) == False):
-    print(str(l[0]) + " " + str(l[1]))
     fullGrid = grid
     return True
 
   xPos = l[0]
   yPos = l[1]
 
-
-  print("CurrentX: " + str(xPos) + " Current Y: " + str(yPos))
-
-  printGrid(grid)
-
   for num in range(1,a + 1):
 
-    print("Num: " + str(num))
 
     if (isSafe(grid, xPos, yPos, num)):
         counter += 1
         grid[xPos][yPos].num = num
-        print("It's safe")
         if(solveSudoku(grid)):
           return True
         else:
           grid[xPos][yPos].num = 0
-          
-          printGrid(grid)
 
-
-
-  printGrid(grid)
-  print(False)
   return False
 
 counter = 0
+
 print(a)
+
+print("Grid initialized to all 0s:")
 printGrid(zeroInit(fullGrid))
 print(solveSudoku(fullGrid))
 printGrid(fullGrid)
-print("COUNT: " + str(counter))
+print("FINAL COUNT: " + str(counter))
