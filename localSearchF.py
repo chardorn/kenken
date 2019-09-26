@@ -252,6 +252,8 @@ class HeuristicsLocalSearchKenKenSolver(AbsKenKenSolver):
         print(iterCount)
         return solution
 
+#Final iteration, swaps rows given a hardwired constraint that each row
+#contains all the numbers between 1 to n in some order
 class RowSwapLocalSearchKenKenSolver(AbsKenKenSolver):
     def __init__(self,
             game : "KenKenGame",
